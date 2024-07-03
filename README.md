@@ -3,13 +3,13 @@
 Собрать для себя окружение из Nginx + PHP-FPM и PHP CLI
 Выполните код в контейнере PHP CLI и объясните, что выведет данный код и почему:
 
-` <?php<br>
-$a = 5;<br>
-$b = '05';<br>
-var_dump($a == $b);<br>
-var_dump((int)'012345');<br>
-var_dump((float)123.0 === (int)123.0);<br>
-var_dump(0 == 'hello, world');<br>
+` <?php\
+$a = 5;\
+$b = '05';\
+var_dump($a == $b);\
+var_dump((int)'012345');\
+var_dump((float)123.0 === (int)123.0);\
+var_dump(0 == 'hello, world');\
 ?> `
 
 В контейнере с PHP CLI поменяйте версию PHP с 8.2 на 7.4. Изменится ли вывод?
