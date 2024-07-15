@@ -64,6 +64,30 @@ function clearFunction(array $config) : string {
     }
 }
 
+/**
+ * Функция вывода сегодняшних именинников
+ * @param array $config
+ * @return string
+ */
+function birthdayToday(array $config) : string
+{
+    $fileContent = readAllFunction($config);
+    $thisDay = date("d");
+    $thisMonth = date("m");
+
+    $dataArray = explode(PHP_EOL, substr($fileContent, 0, strlen($fileContent) - 2));
+    $findBirthdays = [];
+
+    foreach ($dataArray as $man) {
+        $birthday = explode(', ', $man)[1];
+        $dateArr = explode('-', $birthday);
+        if ($dateArr[0] === $thisDay && $dateArr[1] === $thisMonth)
+            $findBirthdays[] = $man;
+    }
+
+    return "Сегодня день рождения у " . implode(PHP_EOL, $findBirthdays);
+}
+
 function helpFunction() {
     return handleHelp();
 }

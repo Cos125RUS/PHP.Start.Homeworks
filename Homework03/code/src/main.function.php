@@ -27,6 +27,7 @@ function parseCommand() : string {
             'read-all' => 'readAllFunction',
             'add' => 'addFunction',
             'clear' => 'clearFunction',
+            'birthday-today' => 'birthdayToday',
             'read-profiles' => 'readProfilesDirectory',
             'read-profile' => 'readProfile',
             'help' => 'helpFunction',
