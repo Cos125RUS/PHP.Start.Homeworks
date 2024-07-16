@@ -35,3 +35,14 @@ function validateName(string $name): bool
     return true;
 }
 
+/**
+ * Получение массива построчных данных
+ * @param array $config
+ * @return array
+ */
+function getDataArray(array $config) : array
+{
+    $fileContent = readAllFunction($config);
+
+    return explode(PHP_EOL, substr($fileContent, 0, strlen($fileContent) - 2));
+}

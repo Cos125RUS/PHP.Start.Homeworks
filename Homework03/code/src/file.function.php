@@ -65,17 +65,51 @@ function clearFunction(array $config) : string {
 }
 
 /**
+ * Удалить запись из журнала по имени
+ * @param array $config
+ * @return string
+ */
+function delete(array $config) : string
+{
+    $dataArray = getDataArray($config);
+
+    $name = readline("Введите имя: ");
+
+    if (validateName($name)) {
+        for ($i = 0; $i < count($dataArray); $i++) {
+            if (explode(', ', $dataArray[$i])[0] === $name) {
+                unset($dataArray[$i]);
+                $address = $config['storage']['address'];
+
+                $fileHandler = fopen($address, 'w');
+                if(fwrite($fileHandler, implode(PHP_EOL, $dataArray) . PHP_EOL)){
+                    $result = "Запись удалена";
+                }
+                else {
+                    $result = handleError("Произошла ошибка при удалении из файла.");
+                }
+                fclose($fileHandler);
+                return $result;
+            }
+        }
+    } else {
+        return "Имя введено некорректно";
+    }
+
+    return "Указанное имя отсутствует в журнале";
+}
+
+/**
  * Функция вывода сегодняшних именинников
  * @param array $config
  * @return string
  */
 function birthdayToday(array $config) : string
 {
-    $fileContent = readAllFunction($config);
     $thisDay = date("d");
     $thisMonth = date("m");
 
-    $dataArray = explode(PHP_EOL, substr($fileContent, 0, strlen($fileContent) - 2));
+    $dataArray = getDataArray($config);
     $findBirthdays = [];
 
     foreach ($dataArray as $man) {
