@@ -31,7 +31,7 @@ function parseCommand() : string {
             'birthday-today' => 'birthdayToday',
             'read-profiles' => 'readProfilesDirectory',
             'read-profile' => 'readProfile',
-            'help' => 'helpFunction',
+//            'help' => 'helpFunction',
             default => 'helpFunction'
         };
     }

@@ -1,5 +1,10 @@
 <?php
 
+/**
+ * Валидация по дате
+ * @param string $date
+ * @return bool
+ */
 function validateDate(string $date): bool
 {
     $dateBlocks = explode("-", $date);
@@ -23,6 +28,11 @@ function validateDate(string $date): bool
     return true;
 }
 
+/**
+ * Валидация по имени
+ * @param string $name
+ * @return bool
+ */
 function validateName(string $name): bool
 {
     if (strlen($name) === 0) return false;

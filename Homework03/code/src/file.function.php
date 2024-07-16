@@ -122,7 +122,7 @@ function birthdayToday(array $config) : string
     return "Сегодня день рождения у " . implode(PHP_EOL, $findBirthdays);
 }
 
-function helpFunction() {
+function helpFunction() : string {
     return handleHelp();
 }
 
