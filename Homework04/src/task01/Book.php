@@ -12,6 +12,8 @@ class Book extends AbstractBook
      */
     private Holder|null $holder;
     protected int $id;
+    protected int|null $shelfId;
+    protected int|null $closetId;
     private static int $idCounter = 0;
 
     public function __construct(string $title, string $author, int $age, int $pageCount)
@@ -28,6 +30,8 @@ class Book extends AbstractBook
     {
         $this->holder = $holder;
         $holder->takeBook($this);
+        $this->shelfId = null;
+        $this->closetId = null;
     }
 
     /** Вернуть книгу
@@ -37,6 +41,7 @@ class Book extends AbstractBook
     {
         $this->holder->returnBook($this->title);
         $this->holder = null;
+        //TODO: добавить логику размещения на полках
     }
 
     public function getId(): int
@@ -47,6 +52,26 @@ class Book extends AbstractBook
     public function setId(int $id): void
     {
         $this->id = $id;
+    }
+
+    public function getShelfId(): int
+    {
+        return $this->shelfId;
+    }
+
+    public function setShelfId(int $shelfId): void
+    {
+        $this->shelfId = $shelfId;
+    }
+
+    public function getClosetId(): int
+    {
+        return $this->closetId;
+    }
+
+    public function setClosetId(int $closetId): void
+    {
+        $this->closetId = $closetId;
     }
 
 
