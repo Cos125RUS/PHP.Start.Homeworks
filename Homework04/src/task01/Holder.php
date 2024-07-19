@@ -48,15 +48,15 @@ class Holder
      */
     public function takeBook(Book $book): void
     {
-        $this->books[$book->getTitle()] = $book;
+        $this->books[$book->getId()] = $book->getTitle();
     }
 
     /** Вернуть книгу в библиотеку
-     * @param string $title
+     * @param int $bookId
      * @return void
      */
-    public function returnBook(string $title): void
+    public function returnBook(int $bookId): void
     {
-        unset($this->books[$title]);
+        unset($this->books[$bookId]);
     }
 }

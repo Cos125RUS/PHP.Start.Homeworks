@@ -76,13 +76,12 @@ class Library
     }
 
     /** Добавить ретрограда, любителя ходить в библиотеку
-     * @param string $name
-     * @param string|null $phone
+     * @param Holder $holder
      * @return void
      */
-    public function addHolder(string $name, ?string $phone): void
+    public function addHolder(Holder $holder): void
     {
-        $this->holders[$name] = new Holder($name, $phone);
+        $this->holders[$holder->getName()] = $holder;
     }
 
     /** Увы, но люди умирают
@@ -126,6 +125,12 @@ class Library
      */
     public function giveBook(Book $book, Holder $holder): void
     {
+        //Получаем id полки и шкафа
+        $shelfId = $book->getShelfId();
+        $closetId = $book->getClosetId();
+        //Удаляем информацию о хранении
+        $this->closets[$closetId]->getShelf($shelfId)->takeBook($book->getId());
+        //Выдаём книгу читателю
         $book->giveBook($holder);
     }
 
