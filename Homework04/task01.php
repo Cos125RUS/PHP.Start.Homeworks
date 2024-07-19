@@ -6,6 +6,9 @@ use Valerii\Homework04\task01\Library;
 use Valerii\Homework04\task01\Book;
 use Valerii\Homework04\task01\Closet;
 use Valerii\Homework04\task01\Holder;
+use Valerii\Homework04\task01\WebClient;
+use Valerii\Homework04\task01\WebShop;
+use Valerii\Homework04\task01\DigitalBook;
 
 //Создаём библиотеку
 $lib = new Library("Библиотека №12", "г.Владивосток, ул.Талалихина, д.10");
@@ -25,5 +28,23 @@ print_r($lib);
 //Выдаём книгу читателю
 $lib->giveBook($book, $holder);
 
-echo PHP_EOL . "==================================" . PHP_EOL;
+echo PHP_EOL . "================ После получения книги в библиотеке==================" . PHP_EOL;
 print_r($lib);
+
+echo PHP_EOL . "================= Создание интернет-магазина =================" . PHP_EOL;
+//Создаём интернет-магазин
+$shop = new WebShop("Books", "http://books.com", "123456789101112");
+
+//Создаём электронную книгу
+$digitBook = new DigitalBook("Мастер и Маргарита", "Михаил Булгаков", 1928, 512, 900);
+$shop->addBook($digitBook);
+
+//Создаём клиента интернет-магазина
+$client = new WebClient("Фёдор", "fedor@mail.ru", "1111 2222 3333 4444");
+
+print_r($shop);
+
+echo PHP_EOL . "================= После продажи книги =================" . PHP_EOL;
+$shop->trade($digitBook, $client);
+print_r($shop);
+print_r($client);

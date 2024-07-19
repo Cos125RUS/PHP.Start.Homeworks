@@ -11,7 +11,6 @@ class Book extends AbstractBook
      * @var Holder|null Клиент, взявший книгу в библиотеке
      */
     private Holder|null $holder;
-    protected int $id;
     protected int|null $shelfId;
     protected int|null $closetId;
     private static int $idCounter = 0;
@@ -42,11 +41,6 @@ class Book extends AbstractBook
         $this->holder->returnBook($this->title);
         $this->holder = null;
         //TODO: добавить логику размещения на полках
-    }
-
-    public function getId(): int
-    {
-        return $this->id;
     }
 
     public function setId(int $id): void

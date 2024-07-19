@@ -7,6 +7,7 @@ namespace Valerii\Homework04\task01;
  */
 abstract class AbstractBook
 {
+    protected int $id;
     protected string $title;
     protected string $author;
     protected int $age;
@@ -63,6 +64,11 @@ abstract class AbstractBook
     public function setPageCount(int $pageCount): void
     {
         $this->pageCount = $pageCount;
+    }
+
+    public function getId(): int
+    {
+        return $this->id;
     }
 
 

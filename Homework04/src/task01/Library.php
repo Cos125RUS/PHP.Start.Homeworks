@@ -5,7 +5,7 @@ namespace Valerii\Homework04\task01;
 /**
  * Библиотека
  */
-class Library
+class Library implements IBookManager
 {
     private string $name;
     private string $address;
@@ -110,12 +110,12 @@ class Library
     }
 
     /** Ничто не вечно
-     * @param Book $book
+     * @param int $bookId
      * @return void
      */
-    public function deleteBook(Book $book): void
+    public function deleteBook(int $bookId): void
     {
-        unset($this->books[$book->getId()]);
+        unset($this->books[$bookId]);
     }
 
     /** Выдать книгу читателю

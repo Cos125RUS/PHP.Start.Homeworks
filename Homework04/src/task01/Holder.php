@@ -5,9 +5,8 @@ namespace Valerii\Homework04\task01;
 /**
  * Клиент библиотеки
  */
-class Holder
+class Holder extends Client
 {
-    protected string $name;
     protected string $phone;
     protected array $books;
 
@@ -17,19 +16,9 @@ class Holder
      */
     public function __construct(string $name, string $phone = null)
     {
-        $this->name = $name;
+        parent::__construct($name);
         $this->phone = $phone;
         $this->books = [];
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): void
-    {
-        $this->name = $name;
     }
 
     public function getPhone(): string
