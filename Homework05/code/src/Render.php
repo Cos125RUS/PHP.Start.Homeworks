@@ -23,6 +23,9 @@ class Render {
     public function renderPage(string $contentTemplateName = 'page-index.twig', array $templateVariables = []) {
         $template = $this->environment->load('main.twig');
 
+        $style = Application::config()['public']['style'] . "style.css";
+        $templateVariables['style'] = $style;
+
         $templateVariables['header'] = 'header.twig';
         $templateVariables['sidebar'] = 'sidebar.twig';
         $templateVariables['footer'] = 'footer.twig';
@@ -30,6 +33,15 @@ class Render {
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['title'] = $templateVariables['title'] ?? 'Имя страницы';
 
+        $templateVariables['time'] = time();
+
         return $template->render($templateVariables);
+    }
+
+    public static function renderError(): void
+    {
+        header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found", true, 404);
+        $page404 = $_SERVER['DOCUMENT_ROOT'] . Application::config()['public']['html'] . "404.html";
+        include($page404);
     }
 }

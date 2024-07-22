@@ -2,7 +2,8 @@
 
 namespace Geekbrains\Application1;
 
-final class Application {
+final class Application
+{
 
     private const APP_NAMESPACE = 'Geekbrains\Application1\Controllers\\';
 
@@ -11,31 +12,30 @@ final class Application {
     private static array $configData;
 
 
-    public function run() : string {
+    public function run(): string
+    {
         Application::$configData = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . '/config.ini', true);
         $routeArray = explode('/', $_SERVER['REQUEST_URI']);
 
-        if(isset($routeArray[1]) && $routeArray[1] != '') {
+        if (isset($routeArray[1]) && $routeArray[1] != '') {
             $controllerName = $routeArray[1];
-        }
-        else{
+        } else {
             $controllerName = "page";
         }
 
         $this->controllerName = Application::APP_NAMESPACE . ucfirst($controllerName) . "Controller";
 
-        if(class_exists($this->controllerName)){
+        if (class_exists($this->controllerName)) {
             // пытаемся вызвать метод
-            if(isset($routeArray[2]) && $routeArray[2] != '') {
+            if (isset($routeArray[2]) && $routeArray[2] != '') {
                 $methodName = $routeArray[2];
-            }
-            else {
+            } else {
                 $methodName = "index";
             }
 
             $this->methodName = "action" . ucfirst($methodName);
 
-            if(method_exists($this->controllerName, $this->methodName)){
+            if (method_exists($this->controllerName, $this->methodName)) {
                 $controllerInstance = new $this->controllerName();
                 //$method = $this->methodName;
                 //return $controllerInstance->$method();
@@ -43,13 +43,15 @@ final class Application {
                     [$controllerInstance, $this->methodName],
                     []
                 );
+            } else {
+                Render::renderError();
+                die();
+//                return "Метод не существует";
             }
-            else {
-                return "Метод не существует";
-            }
-        }
-        else{
-            return "Класс $this->controllerName не существует";
+        } else {
+            Render::renderError();
+            die();
+//            return "Класс $this->controllerName не существует";
         }
     }
 
