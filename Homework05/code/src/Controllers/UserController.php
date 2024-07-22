@@ -8,7 +8,8 @@ use Geekbrains\Application1\Models\User;
 
 class UserController {
 
-    public function actionAddUser() {
+    public function actionAdd() {
+
         return "Тут добавляется юзер";
     }
 

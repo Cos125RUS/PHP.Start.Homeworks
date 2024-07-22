@@ -40,8 +40,11 @@ class Render {
 
     public static function renderError(): void
     {
-        header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found", true, 404);
-        $page404 = $_SERVER['DOCUMENT_ROOT'] . Application::config()['public']['html'] . "404.html";
-        include($page404);
+        // через nginx
+        http_response_code(404);
+        // через php
+//        header($_SERVER["SERVER_PROTOCOL"] . " 404 Not Found", true, 404);
+//        $page404 = $_SERVER['DOCUMENT_ROOT'] . Application::config()['public']['html'] . "404.html";
+//        include($page404);
     }
 }
