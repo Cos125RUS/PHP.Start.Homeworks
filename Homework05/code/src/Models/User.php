@@ -66,6 +66,11 @@ class User
         }
     }
 
+    /**
+     * Валидация даты
+     * @param string $date
+     * @return bool
+     */
     public static function validateDate(string $date): bool
     {
         $dateBlocks = explode("-", $date);
@@ -106,6 +111,10 @@ class User
         return true;
     }
 
+    /**
+     * Сохранение нового пользователя
+     * @return bool
+     */
     public function save(): bool
     {
         $config = Application::config();

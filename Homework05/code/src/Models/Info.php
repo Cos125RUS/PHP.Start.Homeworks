@@ -2,6 +2,9 @@
 
 namespace Geekbrains\Application1\Models;
 
+/**
+ * Служебная информация
+ */
 class Info
 {
     private string $name;

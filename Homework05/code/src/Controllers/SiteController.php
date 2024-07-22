@@ -8,6 +8,10 @@ use Geekbrains\Application1\Render;
 
 class SiteController
 {
+    /**
+     * Информация о сайте
+     * @return string
+     */
     public function actionInfo(): string
     {
         $info = new Info();

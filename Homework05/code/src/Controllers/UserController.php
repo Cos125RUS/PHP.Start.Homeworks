@@ -15,7 +15,11 @@ class UserController
         $this->render = new Render();
     }
 
-    public function actionNew()
+    /**
+     * Добавление пользователя через POST-запрос по форме
+     * @return string
+     */
+    public function actionNew(): string
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_POST['name'] && $_POST['birthday']) {
             return $this->newUser($_POST['name'], $_POST['birthday']);
@@ -24,7 +28,11 @@ class UserController
         }
     }
 
-    public function actionSave()
+    /**
+     * Добавление пользователя через аргументы url
+     * @return string
+     */
+    public function actionSave(): string
     {
         $args = [];
         $queryArray = explode('&', $_SERVER['QUERY_STRING']);
@@ -54,7 +62,11 @@ class UserController
         }
     }
 
-    public function actionAdd()
+    /**
+     * Форма добавления пользователя
+     * @return string
+     */
+    public function actionAdd(): string
     {
         return $this->render->renderPage(
             'user-add.twig',
@@ -63,7 +75,11 @@ class UserController
             ]);
     }
 
-    public function actionIndex()
+    /**
+     * Список пользователей
+     * @return string
+     */
+    public function actionIndex(): string
     {
         $config = Application::config();
         $users = User::getAllUsersFromStorage($config['storage']['address']);
@@ -87,7 +103,13 @@ class UserController
         }
     }
 
-    public function newUser(string $name, string $birthday): string
+    /**
+     * Вспомогательная функция добавления пользователя
+     * @param string $name
+     * @param string $birthday
+     * @return string
+     */
+    private function newUser(string $name, string $birthday): string
     {
         $user = new User($name, strtotime($birthday));
         if ($user->save()) {
