@@ -23,6 +23,10 @@ class Render {
     public function renderPage(string $contentTemplateName = 'page-index.twig', array $templateVariables = []) {
         $template = $this->environment->load('main.twig');
 
+        $templateVariables['header'] = 'header.twig';
+        $templateVariables['sidebar'] = 'sidebar.twig';
+        $templateVariables['footer'] = 'footer.twig';
+
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['title'] = $templateVariables['title'] ?? 'Имя страницы';
 
