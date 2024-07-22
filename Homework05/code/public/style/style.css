@@ -51,6 +51,17 @@ li {
     padding-left: 50px;
 }
 
+form {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+button {
+    max-width: 200px;
+}
+
 .content {
     flex-basis: 0;
     flex-grow: 4;
