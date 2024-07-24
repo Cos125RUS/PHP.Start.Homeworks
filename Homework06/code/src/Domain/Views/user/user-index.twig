@@ -3,6 +3,10 @@
 
 <ul id="navigation">
     {% for user in users %}
-        <li>{{ user.getIdUser() }} | {{ user.getUserName() }} {{ user.getUserlastname() }}. День рождения: {{ user.getUserBirthdayTimestamp() | date('d.m.Y') }}</li>
+        <li>
+            <a href="/payment/find/?id={{ user.getIdUser() }}">
+                {{ user.getIdUser() }} | {{ user.getUserName() }} {{ user.getUserlastname() }}. День рождения: {{ user.getUserBirthdayTimestamp() | date('d.m.Y') }}
+            </a>
+        </li>
     {% endfor %}
 </ul>

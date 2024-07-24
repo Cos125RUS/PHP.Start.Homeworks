@@ -49,11 +49,11 @@ final class Application
                     []
                 );
             } else {
-                Render::renderError();
+                Render::notFound();
                 die();
             }
         } else {
-            Render::renderError();
+            Render::notFound();
             die();
         }
     }

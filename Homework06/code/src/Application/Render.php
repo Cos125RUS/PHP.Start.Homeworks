@@ -21,7 +21,8 @@ class Render {
         ]);
     }
 
-    public function renderPage(string $contentTemplateName = 'page-index.twig', array $templateVariables = []) {
+    public function renderPage(string $contentTemplateName = 'page-index.twig', array $templateVariables = []): string
+    {
         $template = $this->environment->load('block/main.twig');
 
         $style = Application::$config->get()['public']['style'] . "style.css";
@@ -39,7 +40,7 @@ class Render {
         return $template->render($templateVariables);
     }
 
-    public static function renderError(): void
+    public static function notFound(): void
     {
         // через nginx
         http_response_code(404);
@@ -51,6 +52,11 @@ class Render {
 
     public static function renderExceptionPage(Exception $e): string
     {
-        return $e->getMessage();
+        $render = new Render();
+
+        return $render->renderPage('/support/error.twig', [
+            "error" => $e->getMessage(),
+//            "trace" => $e->getTraceAsString(),
+        ]);
     }
 }

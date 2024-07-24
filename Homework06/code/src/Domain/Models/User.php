@@ -122,15 +122,72 @@ class User
      */
     public function save(): bool
     {
-        $sql = 'INSERT INTO users (user_name, user_lastname, user_birthday_timestamp) VALUE (:user_name, :user_lastname, :user_birthday_timestamp)';
-        $storage = Application::$storage->get();
-        $handler = $storage->prepare($sql);
-        $handler->execute([
+        $sql = 'INSERT INTO users (user_name, user_lastname, user_birthday_timestamp) 
+    VALUE (:user_name, :user_lastname, :user_birthday_timestamp)';
+        $params = [
             "user_name" => $this->user_name,
             "user_lastname" => $this->user_lastname,
             "user_birthday_timestamp" => $this->user_birthday_timestamp
-            ]);
-        $this->setIdUser($storage->lastInsertId());
+        ];
+        self::executeQuery($sql, $params);
+        $this->setIdUser(Application::$storage->get()->lastInsertId());
+        return true;
+    }
+
+    public static function isExist(int $id): bool
+    {
+        return self::getById($id) != '';
+    }
+
+    public function setUserName(?string $user_name): void
+    {
+        $this->user_name = $user_name;
+    }
+
+    public function setUserBirthdayTimestamp(?int $user_birthday_timestamp): void
+    {
+        $this->user_birthday_timestamp = $user_birthday_timestamp;
+    }
+
+    public static function getById(int $id) : User|string
+    {
+        $sql = "SELECT * FROM users WHERE id_user = :id";
+        $params = ["id" => $id];
+        $handler = self::executeQuery($sql, $params);
+        $handler->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Geekbrains\Application1\Domain\Models\User');
+        return $handler->fetch();
+    }
+
+    public function updateInStorage(): bool
+    {
+        $sql = 'UPDATE users 
+        SET user_name = :name, 
+            user_lastname = :lastname, 
+            user_birthday_timestamp = :birthday 
+        WHERE id_user = :id';
+        $params = [
+            "name" => $this->user_name,
+            "lastname" => $this->user_lastname,
+            "birthday" => $this->user_birthday_timestamp,
+            "id" => $this->id_user
+        ];
+        self::executeQuery($sql, $params);
+        return true;
+    }
+
+    public static function executeQuery(string $sql, array $params): bool|\PDOStatement
+    {
+        $storage = Application::$storage->get();
+        $handler = $storage->prepare($sql);
+        $handler->execute($params);
+        return $handler;
+    }
+
+    public function deleteFromStorage(): bool
+    {
+        $sql = 'DELETE FROM users WHERE id_user = :id';
+        $params = ["id" => $this->id_user];
+        self::executeQuery($sql, $params);
         return true;
     }
 }

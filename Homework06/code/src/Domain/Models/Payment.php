@@ -82,10 +82,9 @@ class Payment
         return $payments;
     }
 
-    public static function getById(): false|array
+    public static function getById(int $id): false|array
     {
-        $sql = 'select users.user_name, users.user_lastname, amount FROM users inner join user_payment on users.id_user = user_payment.id_user where users.id_user = :id';
-        $id = (int)$_GET['id'] ?? 0;
+        $sql = 'select users.user_name, users.user_lastname, amount FROM users inner join user_payment on users.id_user = user_payment.user_id where users.id_user = :id';
 
         $connect = Application::$storage->get();
         $request = $connect->prepare($sql);

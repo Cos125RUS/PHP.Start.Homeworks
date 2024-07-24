@@ -2,7 +2,9 @@
 
 namespace Geekbrains\Application1\Domain\Controllers;
 
+use Exception;
 use Geekbrains\Application1\Application\Application;
+use Geekbrains\Application1\Application\QueryChecker;
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\User;
 
@@ -123,6 +125,69 @@ class UserController
                     'title' => "Ошибка записи",
                     'message' => "Ошибка записи. Пользователь $name $lastname не добавлен"
                 ]);
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function actionUpdate(): string
+    {
+        $id = QueryChecker::checkId();
+        if ($id) {
+            if (User::isExist($_GET['id'])) {
+                $user = User::getById($id);
+                if (QueryChecker::checkQuery('name')) {
+                    $user->setUserName($_GET['name']);
+                }
+                if (QueryChecker::checkQuery('lastname')) {
+                    $user->setUserName($_GET['lastname']);
+                }
+                if (QueryChecker::checkQuery('birthday')) {
+                    $user->setUserName($_GET['birthday']);
+                }
+                if ($user->updateInStorage()) {
+                    return $this->render->renderPage(
+                        'support/message.twig',
+                        [
+                            'title' => "Пользователь обновлён",
+                            'message' => "Данные обновлены"
+                        ]);
+                } else {
+                    throw new Exception("Ошибка обновления базы данных");
+                }
+            } else {
+                throw new Exception("Пользователь с заданным id не существует");
+            }
+        } else {
+            throw new Exception("id указан неверно");
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function actionDelete()
+    {
+        $id = QueryChecker::checkId();
+        if ($id) {
+            if (User::isExist($_GET['id'])) {
+                $user = User::getById($id);
+                if ($user->deleteFromStorage()) {
+                    return $this->render->renderPage(
+                        'support/message.twig',
+                        [
+                            'title' => "Пользователь удалён",
+                            'message' => "Пользователь удалён"
+                        ]);
+                } else {
+                    throw new Exception("Ошибка удаления пользователя из базы данных");
+                }
+            } else {
+                throw new Exception("Пользователь с заданным id не существует");
+            }
+        } else {
+            throw new Exception("id указан неверно");
         }
     }
 }

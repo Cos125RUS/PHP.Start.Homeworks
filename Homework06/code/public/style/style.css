@@ -87,3 +87,7 @@ input {
 .content > p {
     margin-top: 15px;
 }
+
+.error {
+    color: #f16e6e;
+}
