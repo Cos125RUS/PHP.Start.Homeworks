@@ -2,6 +2,9 @@
 
 namespace Geekbrains\Application1\Application;
 
+use Exception;
+use Geekbrains\Application1\Domain\Models\User;
+
 class QueryChecker
 {
     public static function checkId(): int
@@ -13,4 +16,5 @@ class QueryChecker
     {
         return array_key_exists($key, $_GET);
     }
+
 }

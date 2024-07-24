@@ -71,6 +71,11 @@ class UserController
             $this->prefix . 'user-add.twig',
             [
                 'title' => 'Добавление пользователя',
+                'subtitle' => 'Добавление нового пользователя',
+                'action' => '/user/new',
+                'name' => "",
+                'lastname' => "",
+                'birthday' => "",
             ]);
     }
 
@@ -87,7 +92,7 @@ class UserController
                 $this->prefix . 'user-empty.twig',
                 [
                     'title' => 'Список пользователей в хранилище',
-                    'message' => "Список пуст или не найден",
+                    'message' => "Список пользователей пуст",
                     'href' => '/user/add'
                 ]);
         } else {
@@ -133,61 +138,87 @@ class UserController
      */
     public function actionUpdate(): string
     {
-        $id = QueryChecker::checkId();
-        if ($id) {
-            if (User::isExist($_GET['id'])) {
-                $user = User::getById($id);
-                if (QueryChecker::checkQuery('name')) {
-                    $user->setUserName($_GET['name']);
-                }
-                if (QueryChecker::checkQuery('lastname')) {
-                    $user->setUserName($_GET['lastname']);
-                }
-                if (QueryChecker::checkQuery('birthday')) {
-                    $user->setUserName($_GET['birthday']);
-                }
-                if ($user->updateInStorage()) {
-                    return $this->render->renderPage(
-                        'support/message.twig',
-                        [
-                            'title' => "Пользователь обновлён",
-                            'message' => "Данные обновлены"
-                        ]);
-                } else {
-                    throw new Exception("Ошибка обновления базы данных");
-                }
-            } else {
-                throw new Exception("Пользователь с заданным id не существует");
-            }
+        $user = User::findUser();
+        if (QueryChecker::checkQuery('name')) {
+            $user->setUserName($_GET['name']);
+        }
+        if (QueryChecker::checkQuery('lastname')) {
+            $user->setUserName($_GET['lastname']);
+        }
+        if (QueryChecker::checkQuery('birthday')) {
+            $user->setUserName($_GET['birthday']);
+        }
+        if ($user->updateInStorage()) {
+            return $this->render->renderPage(
+                'support/message.twig',
+                [
+                    'title' => "Пользователь обновлён",
+                    'message' => "Данные обновлены"
+                ]);
         } else {
-            throw new Exception("id указан неверно");
+            throw new Exception("Ошибка обновления базы данных");
         }
     }
 
     /**
      * @throws Exception
      */
-    public function actionDelete()
+    public function actionDelete(): string
     {
-        $id = QueryChecker::checkId();
-        if ($id) {
-            if (User::isExist($_GET['id'])) {
-                $user = User::getById($id);
-                if ($user->deleteFromStorage()) {
-                    return $this->render->renderPage(
-                        'support/message.twig',
-                        [
-                            'title' => "Пользователь удалён",
-                            'message' => "Пользователь удалён"
-                        ]);
-                } else {
-                    throw new Exception("Ошибка удаления пользователя из базы данных");
-                }
-            } else {
-                throw new Exception("Пользователь с заданным id не существует");
-            }
+        $user = User::findUser();
+        if ($user->deleteFromStorage()) {
+            return $this->render->renderPage(
+                'support/message.twig',
+                [
+                    'title' => "Пользователь удалён",
+                    'message' => "Пользователь удалён"
+                ]);
         } else {
-            throw new Exception("id указан неверно");
+            throw new Exception("Ошибка удаления пользователя из базы данных");
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function actionChange(): string
+    {
+        $user = User::findUser();
+
+        return $this->render->renderPage(
+            $this->prefix . 'user-add.twig',
+            [
+                'title' => 'Обновление пользователя',
+                'subtitle' => 'Изменение пользовательских данных',
+                'action' => "/user/rewrite/?id={$user->getIdUser()}",
+                'name' => $user->getUserName(),
+                'lastname' => $user->getUserLastname(),
+                'birthday' => $user->getUserBirthdayTimestamp(),
+            ]);
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function actionRewrite(): string
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
+            isset($_POST['name']) &&
+            isset($_POST['lastname']) &&
+            isset($_POST['birthday'])) {
+            $user = User::findUser();
+            $user->setUserName($_POST['name']);
+            $user->setUserLastname($_POST['lastname']);
+            $user->setUserBirthdayTimestamp(strtotime($_POST['birthday']));
+            $user->updateInStorage();
+            return $this->render->renderPage(
+                'support/message.twig',
+                [
+                    'title' => "Данные пользователя обновлены",
+                    'message' => "Данные пользователя обновлены"
+                ]);
+        } else {
+            return "Ты как сюда попал?";
         }
     }
 }

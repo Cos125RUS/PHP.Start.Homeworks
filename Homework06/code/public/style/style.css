@@ -82,6 +82,11 @@ input {
     background-color: #9494e9;
     padding: 5px;
     border: 0;
+    max-width: 200px;
+}
+
+.button:hover {
+    cursor: pointer;
 }
 
 .content > p {
@@ -91,3 +96,11 @@ input {
 .error {
     color: #f16e6e;
 }
+
+.navigation {
+    padding-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+

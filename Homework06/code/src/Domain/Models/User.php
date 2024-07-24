@@ -2,7 +2,9 @@
 
 namespace Geekbrains\Application1\Domain\Models;
 
+use Exception;
 use Geekbrains\Application1\Application\Application;
+use Geekbrains\Application1\Application\QueryChecker;
 use \PDO;
 
 class User
@@ -189,5 +191,22 @@ class User
         $params = ["id" => $this->id_user];
         self::executeQuery($sql, $params);
         return true;
+    }
+
+    /**
+     * @throws Exception
+     */
+    public static function findUser(): User|string
+    {
+        $id = QueryChecker::checkId();
+        if ($id) {
+            if (User::isExist($_GET['id'])) {
+                return User::getById($id);
+            } else {
+                throw new Exception("Пользователь с заданным id не существует");
+            }
+        } else {
+            throw new Exception("id указан неверно");
+        }
     }
 }
