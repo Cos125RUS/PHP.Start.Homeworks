@@ -1,0 +1,8 @@
+{% include "support/add-button.twig" %}
+<p>Список пользователей в хранилище:</p>
+
+<ul id="navigation">
+    {% for user in users %}
+        <li>{{ user.getIdUser() }} | {{ user.getUserName() }} {{ user.getUserlastname() }}. День рождения: {{ user.getUserBirthdayTimestamp() | date('d.m.Y') }}</li>
+    {% endfor %}
+</ul>
