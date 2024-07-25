@@ -2,6 +2,7 @@
 
 namespace Geekbrains\Application1\Domain\Repository;
 
+use Exception;
 use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Domain\Models\User;
 use PDO;
@@ -22,10 +23,10 @@ class UserRepository
         $this->storage = Application::$storage->get();
     }
 
-    /** Извлечь всех юзеров из БД
+    /** Извлечь всех юзеров
      * @return array|false
      */
-    public function getAllUsersFromStorage(): array|false
+    public function getAllUsers(): array|false
     {
         $sql = "SELECT * FROM users";
 
@@ -38,9 +39,9 @@ class UserRepository
     /**
      * Сохранение нового пользователя
      * @param User $user
-     * @return bool
+     * @return User
      */
-    public function save(User $user): bool
+    public function save(User $user): User
     {
         $sql = 'INSERT INTO users (user_name, user_lastname, user_birthday_timestamp) 
     VALUE (:user_name, :user_lastname, :user_birthday_timestamp)';
@@ -51,14 +52,14 @@ class UserRepository
         ];
         $this->executeQuery($sql, $params);
         $user->setIdUser($this->storage->lastInsertId());
-        return true;
+        return $user;
     }
 
     /** Извлечение из БД по id
      * @param int $id
-     * @return User|string
+     * @return User|null
      */
-    public function getById(int $id) : User|string
+    public function getById(int $id) : User|null
     {
         $sql = "SELECT * FROM users WHERE id_user = :id";
         $params = ["id" => $id];
@@ -68,9 +69,11 @@ class UserRepository
     }
 
     /** Обновить данные пользователя
-     * @return bool
+     * @param User $user
+     * @return User
+     * @throws Exception
      */
-    public function updateInStorage(User $user): bool
+    public function update(User $user): User
     {
         $sql = 'UPDATE users 
         SET user_name = :name, 
@@ -83,15 +86,18 @@ class UserRepository
             "birthday" => $user->getUserBirthdayTimestamp(),
             "id" => $user->getIdUser()
         ];
-        $this->executeQuery($sql, $params);
-        return true;
+        if ($this->executeQuery($sql, $params)) {
+            return $user;
+        } else {
+            throw new Exception("Ошибка обновления пользователя в БД");
+        }
     }
 
     /** Удаление юзера по id
      * @param int $id
      * @return bool
      */
-    public function deleteFromStorageById(int $id): bool
+    public function delete(int $id): bool
     {
         $sql = 'DELETE FROM users WHERE id_user = :id';
         $params = ["id" => $id];
@@ -115,6 +121,7 @@ class UserRepository
      * @param PDOStatement $handler
      * @return void
      */
+
     private function setFetchModeToClass(PDOStatement $handler): void
     {
         $handler->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Geekbrains\Application1\Domain\Models\User');

@@ -2,12 +2,17 @@
 
 namespace Geekbrains\Application1\Infrastructure;
 
+use Exception;
+
 class Config {
 
     private string $defaultConfigFile = "/src/config/config.ini";
 
     private array $applicationConfiguration = [];
 
+    /**
+     * @throws Exception
+     */
     public function __construct(){
         $address = dirname($_SERVER['DOCUMENT_ROOT']) . $this->defaultConfigFile;
 
@@ -15,7 +20,7 @@ class Config {
             $this->applicationConfiguration = parse_ini_file($address, true);
         }
         else {
-            throw new \Exception("Файл конфигурации не найден");
+            throw new Exception("Файл конфигурации не найден");
         }
     }
 

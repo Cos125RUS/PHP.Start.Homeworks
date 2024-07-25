@@ -4,7 +4,7 @@ namespace Geekbrains\Application1\Domain\Models;
 
 use Exception;
 use Geekbrains\Application1\Application\Application;
-use Geekbrains\Application1\Application\QueryChecker;
+use Geekbrains\Application1\Application\Validator;
 use \PDO;
 
 class User
@@ -63,16 +63,6 @@ class User
         $this->user_birthday_timestamp = strtotime($birthdayString);
     }
 
-    public static function getAllUsersFromStorage(): array|false
-    {
-        $sql = "SELECT * FROM users";
-
-        $storage = Application::$storage->get();
-        $handler = $storage->query($sql);
-        $handler->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Geekbrains\Application1\Domain\Models\User');
-        return $handler->fetchAll();
-    }
-
     /**
      * Валидация даты
      * @param string $date
@@ -118,29 +108,6 @@ class User
         return true;
     }
 
-    /**
-     * Сохранение нового пользователя
-     * @return bool
-     */
-    public function save(): bool
-    {
-        $sql = 'INSERT INTO users (user_name, user_lastname, user_birthday_timestamp) 
-    VALUE (:user_name, :user_lastname, :user_birthday_timestamp)';
-        $params = [
-            "user_name" => $this->user_name,
-            "user_lastname" => $this->user_lastname,
-            "user_birthday_timestamp" => $this->user_birthday_timestamp
-        ];
-        self::executeQuery($sql, $params);
-        $this->setIdUser(Application::$storage->get()->lastInsertId());
-        return true;
-    }
-
-    public static function isExist(int $id): bool
-    {
-        return self::getById($id) != '';
-    }
-
     public function setUserName(?string $user_name): void
     {
         $this->user_name = $user_name;
@@ -151,62 +118,4 @@ class User
         $this->user_birthday_timestamp = $user_birthday_timestamp;
     }
 
-    public static function getById(int $id) : User|string
-    {
-        $sql = "SELECT * FROM users WHERE id_user = :id";
-        $params = ["id" => $id];
-        $handler = self::executeQuery($sql, $params);
-        $handler->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Geekbrains\Application1\Domain\Models\User');
-        return $handler->fetch();
-    }
-
-    public function updateInStorage(): bool
-    {
-        $sql = 'UPDATE users 
-        SET user_name = :name, 
-            user_lastname = :lastname, 
-            user_birthday_timestamp = :birthday 
-        WHERE id_user = :id';
-        $params = [
-            "name" => $this->user_name,
-            "lastname" => $this->user_lastname,
-            "birthday" => $this->user_birthday_timestamp,
-            "id" => $this->id_user
-        ];
-        self::executeQuery($sql, $params);
-        return true;
-    }
-
-    public static function executeQuery(string $sql, array $params): bool|\PDOStatement
-    {
-        $storage = Application::$storage->get();
-        $handler = $storage->prepare($sql);
-        $handler->execute($params);
-        return $handler;
-    }
-
-    public function deleteFromStorage(): bool
-    {
-        $sql = 'DELETE FROM users WHERE id_user = :id';
-        $params = ["id" => $this->id_user];
-        self::executeQuery($sql, $params);
-        return true;
-    }
-
-    /**
-     * @throws Exception
-     */
-    public static function findUser(): User|string
-    {
-        $id = QueryChecker::checkId();
-        if ($id) {
-            if (User::isExist($_GET['id'])) {
-                return User::getById($id);
-            } else {
-                throw new Exception("Пользователь с заданным id не существует");
-            }
-        } else {
-            throw new Exception("id указан неверно");
-        }
-    }
 }

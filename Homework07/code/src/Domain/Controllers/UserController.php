@@ -4,18 +4,40 @@ namespace Geekbrains\Application1\Domain\Controllers;
 
 use Exception;
 use Geekbrains\Application1\Application\Application;
-use Geekbrains\Application1\Application\QueryChecker;
+use Geekbrains\Application1\Application\Validator;
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\User;
+use Geekbrains\Application1\Domain\Render\SupportRender;
+use Geekbrains\Application1\Domain\Render\UserRender;
+use Geekbrains\Application1\Domain\Service\UserService;
 
 class UserController
 {
-    private Render $render;
-    private string $prefix = 'user/';
+    private UserService $userService;
+    private UserRender $userRender;
+    private SupportRender $supportRender;
 
     public function __construct()
     {
-        $this->render = new Render();
+        $this->userService = new UserService();
+        $this->userRender = new UserRender();
+        $this->supportRender = new SupportRender();
+    }
+
+//    region CRUD
+    /**
+     * Список пользователей
+     * @return string
+     */
+    public function actionIndex(): string
+    {
+        $users = $this->userService->getAllUsersFromStorage();
+
+        if (!$users) {
+            return $this->userRender->renderUsersList("empty");
+        } else {
+            return $this->userRender->renderUsersList("users", $users);
+        }
     }
 
     /**
@@ -35,74 +57,127 @@ class UserController
     }
 
     /**
+     * Изменение данных пользователя через форму
+     * @throws Exception
+     */
+    public function actionRewrite(): string
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
+            isset($_POST['name']) &&
+            isset($_POST['lastname']) &&
+            isset($_POST['birthday'])) {
+            $user = $this->findUser();
+            $user->setUserName($_POST['name']);
+            $user->setUserLastname($_POST['lastname']);
+            $user->setUserBirthdayTimestamp(strtotime($_POST['birthday']));
+            $this->userService->updateUser($user);
+            return $this->supportRender->printMessage("Данные пользователя обновлены",
+                "Данные пользователя {$user->getUserName()} {$user->getUserLastname()} обновлены");
+        } else {
+            return "Ты как сюда попал?";
+        }
+    }
+
+    /** Удаление пользователя
+     * @throws Exception
+     */
+    public function actionDelete(): string
+    {
+        $user = $this->findUser();
+        if ($this->userService->deleteFromStorage($user->getIdUser())) {
+            return $this->supportRender->printMessage("Пользователь удалён",
+                "Пользователь удалён");
+        } else {
+            throw new Exception("Ошибка удаления пользователя из базы данных");
+        }
+    }
+//endregion CRUD
+
+//    region forms
+
+    /**
+     * Форма добавления нового пользователя
+     * @return string
+     */
+    public function actionAdd(): string
+    {
+        return $this->userRender->renderAddForm('Добавление пользователя',
+            'Добавление нового пользователя', '/user/new');
+    }
+
+    /** Форма обновления данных пользователя
+     * @throws Exception
+     */
+    public function actionChange(): string
+    {
+        $user = $this->findUser();
+
+        return $this->userRender->renderAddForm('Обновление пользователя',
+            'Изменение пользовательских данных', "/user/rewrite/?id={$user->getIdUser()}",
+            $user->getUserName(), $user->getUserLastname(), $user->getUserBirthdayTimestamp());
+    }
+
+//endregion forms
+
+//region url-actions
+
+    /**
      * Добавление пользователя через аргументы url
      * @return string
      */
     public function actionSave(): string
     {
         if (!isset($_GET['name']) || !isset($_GET['birthday'])) {
-            return $this->render->renderPage(
-                "{$this->prefix}message.twig",
-                [
-                    'title' => "Некорректный ввод",
-                    'message' => "Введено неправильное количество аргументов url-запроса"
-                ]);
+            return $this->supportRender->printMessage("Некорректный ввод",
+                "Введено неправильное количество аргументов url-запроса");
         }
 
-        if (User::validateName($_GET['name']) && User::validateDate($_GET['birthday'])) {
+        if (User::validateName($_GET['name']) &&
+            User::validateName($_GET['lastname']) &&
+            User::validateDate($_GET['birthday'])) {
             return $this->newUser($_GET['name'], $_GET['lastname'], $_GET['birthday']);
         } else {
-            return $this->render->renderPage(
-                $this->prefix . 'message.twig',
-                [
-                    'title' => "Некорректный ввод",
-                    'message' => "Данные введены некорректно"
-                ]);
+            return $this->supportRender->printMessage("Некорректный ввод",
+                "Данные введены некорректно");
         }
     }
 
-    /**
-     * Форма добавления пользователя
-     * @return string
+    /** Обновление данных пользователя через url
+     * @throws Exception
      */
-    public function actionAdd(): string
+    public function actionUpdate(): string
     {
-        return $this->render->renderPage(
-            $this->prefix . 'user-add.twig',
-            [
-                'title' => 'Добавление пользователя',
-                'subtitle' => 'Добавление нового пользователя',
-                'action' => '/user/new',
-                'name' => "",
-                'lastname' => "",
-                'birthday' => "",
-            ]);
+        $user = $this->findUser();
+
+        if (Validator::checkQuery('name') && User::validateName($_GET['name'])) {
+            $user->setUserName($_GET['name']);
+        }
+        if (Validator::checkQuery('lastname')) {
+            $user->setUserLastname($_GET['lastname']);
+        }
+        if (Validator::checkQuery('birthday')) {
+            $user->setUserBirthdayTimestamp(strtotime($_GET['birthday']));
+        }
+
+        $user = $this->userService->updateUser($user);
+        return $this->supportRender->printMessage("Данные обновлены",
+            "Данные пользователя {$user->getUserName()} {$user->getUserLastname()} обновлены");
     }
 
-    /**
-     * Список пользователей
-     * @return string
-     */
-    public function actionIndex(): string
-    {
-        $users = User::getAllUsersFromStorage();
+//endregion url-actions
 
-        if (!$users) {
-            return $this->render->renderPage(
-                $this->prefix . 'user-empty.twig',
-                [
-                    'title' => 'Список пользователей в хранилище',
-                    'message' => "Список пользователей пуст",
-                    'href' => '/user/add'
-                ]);
+//    region supportFunction
+    /** Вспомогательная функция по поиску Юзера
+     * @return User
+     * @throws Exception
+     */
+    private function findUser(): User
+    {
+        $id = Validator::checkId();
+        if ($id) {
+            return $this->userService->findUserByUd($id);
         } else {
-            return $this->render->renderPage(
-                $this->prefix . 'user-index.twig',
-                [
-                    'title' => 'Список пользователей в хранилище',
-                    'users' => $users,
-                    'href' => '/user/add'
-                ]);
+            throw new Exception("id указан неверно");
         }
     }
 
@@ -115,110 +190,13 @@ class UserController
      */
     private function newUser(string $name, string $lastname, string $birthday): string
     {
-        $user = new User($name, $lastname, strtotime($birthday));
-        if ($user->save()) {
-            return $this->render->renderPage(
-                'support/message.twig',
-                [
-                    'title' => "Пользователь добавлен",
-                    'message' => "Пользователь $name $lastname добавлен"
-                ]);
-        } else {
-            return $this->render->renderPage(
-                'support/message.twig',
-                [
-                    'title' => "Ошибка записи",
-                    'message' => "Ошибка записи. Пользователь $name $lastname не добавлен"
-                ]);
+        try {
+            $user = $this->userService->createUser($name, $lastname, $birthday);
+            return $this->supportRender->printMessage("Пользователь добавлен",
+                "Пользователь {$user->getUserName()} {$user->getUserLastname()} добавлен");
+        } catch (Exception $e) {
+            return $this->supportRender->printMessage("Пользователь не добавлен", $e->getMessage());
         }
     }
-
-    /**
-     * @throws Exception
-     */
-    public function actionUpdate(): string
-    {
-        $user = User::findUser();
-        if (QueryChecker::checkQuery('name')) {
-            $user->setUserName($_GET['name']);
-        }
-        if (QueryChecker::checkQuery('lastname')) {
-            $user->setUserName($_GET['lastname']);
-        }
-        if (QueryChecker::checkQuery('birthday')) {
-            $user->setUserName($_GET['birthday']);
-        }
-        if ($user->updateInStorage()) {
-            return $this->render->renderPage(
-                'support/message.twig',
-                [
-                    'title' => "Пользователь обновлён",
-                    'message' => "Данные обновлены"
-                ]);
-        } else {
-            throw new Exception("Ошибка обновления базы данных");
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function actionDelete(): string
-    {
-        $user = User::findUser();
-        if ($user->deleteFromStorage()) {
-            return $this->render->renderPage(
-                'support/message.twig',
-                [
-                    'title' => "Пользователь удалён",
-                    'message' => "Пользователь удалён"
-                ]);
-        } else {
-            throw new Exception("Ошибка удаления пользователя из базы данных");
-        }
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function actionChange(): string
-    {
-        $user = User::findUser();
-
-        return $this->render->renderPage(
-            $this->prefix . 'user-add.twig',
-            [
-                'title' => 'Обновление пользователя',
-                'subtitle' => 'Изменение пользовательских данных',
-                'action' => "/user/rewrite/?id={$user->getIdUser()}",
-                'name' => $user->getUserName(),
-                'lastname' => $user->getUserLastname(),
-                'birthday' => $user->getUserBirthdayTimestamp(),
-            ]);
-    }
-
-    /**
-     * @throws Exception
-     */
-    public function actionRewrite(): string
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
-            isset($_POST['name']) &&
-            isset($_POST['lastname']) &&
-            isset($_POST['birthday'])) {
-            $user = User::findUser();
-            $user->setUserName($_POST['name']);
-            $user->setUserLastname($_POST['lastname']);
-            $user->setUserBirthdayTimestamp(strtotime($_POST['birthday']));
-            $user->updateInStorage();
-            return $this->render->renderPage(
-                'support/message.twig',
-                [
-                    'title' => "Данные пользователя обновлены",
-                    'message' => "Данные пользователя обновлены"
-                ]);
-        } else {
-            return "Ты как сюда попал?";
-        }
-    }
+//endregion region supportFunction
 }

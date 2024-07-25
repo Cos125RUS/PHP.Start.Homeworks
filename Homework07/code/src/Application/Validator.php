@@ -5,7 +5,7 @@ namespace Geekbrains\Application1\Application;
 use Exception;
 use Geekbrains\Application1\Domain\Models\User;
 
-class QueryChecker
+class Validator
 {
     public static function checkId(): int
     {
