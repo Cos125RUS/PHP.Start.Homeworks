@@ -66,7 +66,7 @@ class Payment
 
         $connect = Application::$storage->get();
         $request = $connect->query($sql);
-        $request->setFetchMode(PDO::FETCH_CLASS, 'Geekbrains\Application1\Domain\Models\Payment');
+        $request->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Geekbrains\Application1\Domain\Models\Payment');
         $payments = $request->fetchAll();
 //        $request->setFetchMode(PDO::FETCH_ASSOC);
 //        $data = $request->fetchAll();

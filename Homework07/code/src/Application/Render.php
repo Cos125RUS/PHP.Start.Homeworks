@@ -15,7 +15,7 @@ class Render {
 
     public function __construct(){
         $this->viewFolder=Application::$config->get()['path']['view'];
-        $this->loader = new FilesystemLoader($_SERVER['DOCUMENT_ROOT'] . $this->viewFolder);
+        $this->loader = new FilesystemLoader(dirname($_SERVER['DOCUMENT_ROOT']) . $this->viewFolder);
         $this->environment = new Environment($this->loader, [
            // 'cache' => $_SERVER['DOCUMENT_ROOT'].'/cache/',
         ]);
