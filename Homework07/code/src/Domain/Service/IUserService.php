@@ -13,5 +13,6 @@ interface IUserService
     function updateUser(User $user) : User;
     function deleteFromStorage(int $id) : bool;
     function getUserRoleById(int $id) : array|false;
+    function authUser(string $login, string $password) : User|false;
 
 }

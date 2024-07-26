@@ -29,7 +29,7 @@ class Auth
     public function proceedAuth(string $login, string $password): bool{
         $user = $this->userService->findUserByLogin($login);
 
-        if(!$user && password_verify($password, $user->getPasswordHash())){
+        if(!$user && password_verify($password, $user->getHashPassword())){
             $_SESSION['user_name'] = $user->getUserName();
             $_SESSION['user_lastname'] = $user->getUserLastname();
             $_SESSION['id_user'] = $user->getIdUser();

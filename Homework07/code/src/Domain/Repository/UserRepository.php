@@ -108,14 +108,19 @@ class UserRepository implements IUserRepository
     /** Поиск по имени пользователя
      * @param string $login
      * @return User|null
+     * @throws Exception
      */
     function getByLogin(string $login): User|null
     {
-        $sql = "SELECT id_user, user_name, user_lastname, password_hash FROM users WHERE login = :login";
+        $sql = "SELECT * FROM users WHERE login = :login";
 
-        $handler = $this->executeQuery($sql);
-        $this->setFetchModeToClass($handler);
-        return $handler->fetch();
+        try {
+            $handler = $this->executeQuery($sql, ["login" => $login]);
+            $this->setFetchModeToClass($handler);
+            return $handler->fetch();
+        } catch (\Throwable) {
+            throw new Exception("Ошибка запроса к базе данных");
+        }
     }
 
     /** Выполнение запроса к БД

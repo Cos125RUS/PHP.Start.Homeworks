@@ -86,4 +86,21 @@ class UserService implements IUserService
     {
         return $this->userRepository->getUserRoleById($id);
     }
+
+    /** Авторизация пользователя
+     * @param string $login
+     * @param string $password
+     * @return User|false
+     * @throws Exception
+     */
+    function authUser(string $login, string $password): User|false
+    {
+        $user = $this->findUserByLogin($login);
+        $hash = $user->getHashPassword();
+        if (password_verify($password, $hash)) {
+            return $user;
+        } else {
+            throw new Exception("Пароль указан неверно");
+        }
+    }
 }

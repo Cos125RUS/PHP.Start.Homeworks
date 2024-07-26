@@ -4,7 +4,7 @@ namespace Geekbrains\Application1\Domain\Render;
 
 use Geekbrains\Application1\Application\Render;
 
-class AuthRender
+class AuthRender implements IAuthRender
 {
     private string $prefix = 'auth/';
     private Render $render;
