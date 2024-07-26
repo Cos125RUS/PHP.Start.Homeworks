@@ -14,6 +14,16 @@ class UserController extends Controller
 {
     private IUserRender $userRender;
     private ISupportRender $supportRender;
+    protected array $actionsPermissions = [
+        'actionIndex' => ['admin'],
+        'actionNew' => ['admin'],
+        'actionRewrite' => ['admin'],
+        'actionDelete' => ['admin'],
+        'actionAdd' => ['admin'],
+        'actionChange' => ['admin'],
+        'actionSave' => ['admin'],
+        'actionUpdate' => ['admin'],
+    ];
 
     public function __construct()
     {

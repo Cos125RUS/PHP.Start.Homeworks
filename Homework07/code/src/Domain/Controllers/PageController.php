@@ -6,6 +6,9 @@ use Geekbrains\Application1\Application\Render;
 
 class PageController extends Controller
 {
+    protected array $actionsPermissions = [
+        'actionIndex' => ['user']
+    ];
 
     public function actionIndex(): string
     {

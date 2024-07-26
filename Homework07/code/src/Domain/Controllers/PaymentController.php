@@ -12,6 +12,10 @@ use Geekbrains\Application1\Domain\Service\UserService;
 class PaymentController extends Controller
 {
     private string $prefix = 'payment/';
+    protected array $actionsPermissions = [
+        'actionIndex' => ['admin'],
+        'actionFind' => ['admin'],
+    ];
 
     public function __construct()
     {

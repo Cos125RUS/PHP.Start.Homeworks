@@ -7,6 +7,10 @@ use Geekbrains\Application1\Domain\Models\Phone;
 
 class AboutController extends Controller
 {
+    protected array $actionsPermissions = [
+        "actionIndex" => ['user']
+    ];
+
     public function actionIndex(): string
     {
         $phone = (new Phone())->getPhone();

@@ -11,6 +11,11 @@ use JetBrains\PhpStorm\NoReturn;
 class AuthController extends Controller
 {
     private IAuthRender $authRender;
+    protected array $actionsPermissions = [
+        'actionAuthentication' => ['user'],
+        'actionLogin' => ['user'],
+        'actionLogout' => ['user'],
+    ];
 
     public function __construct()
     {

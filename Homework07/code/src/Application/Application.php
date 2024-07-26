@@ -3,6 +3,8 @@
 namespace Geekbrains\Application1\Application;
 
 use Exception;
+use Geekbrains\Application1\Domain\Controllers\AbstractController;
+use Geekbrains\Application1\Domain\Controllers\Controller;
 use Geekbrains\Application1\Infrastructure\Config;
 use Geekbrains\Application1\Infrastructure\Storage;
 
@@ -22,6 +24,9 @@ final class Application
         Application::$auth = new Auth();
     }
 
+    /**
+     * @throws Exception
+     */
     public function run(): string
     {
         session_start();
@@ -48,10 +53,15 @@ final class Application
 
             if (method_exists($controllerName1, $methodName1)) {
                 $controllerInstance = new $controllerName1();
-                return call_user_func_array(
-                    [$controllerInstance, $methodName1],
-                    []
-                );
+
+                if ($this->checkAccessToMethod($controllerInstance, $methodName1)) {
+                    return call_user_func_array(
+                        [$controllerInstance, $methodName1],
+                        []
+                    );
+                } else {
+                    throw new Exception("В доступе отказано");
+                }
             } else {
                 Render::notFound();
                 die();
@@ -60,5 +70,21 @@ final class Application
             Render::notFound();
             die();
         }
+    }
+
+    private function checkAccessToMethod(Controller $controllerInstance, string $methodName): bool {
+        $userRoles = $controllerInstance->getUserRoles();
+        $rules = $controllerInstance->getActionsPermissions($methodName);
+
+        if(!empty($rules)){
+            foreach($rules as $rolePermission){
+                if(in_array($rolePermission, $userRoles)){
+                    return true;
+                }
+            }
+        }
+
+        return false;
+
     }
 }

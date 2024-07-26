@@ -18,10 +18,7 @@ class Controller
     public function __construct()
     {
         $this->userService = new UserService();
-        if (empty($_SESSION) && isset($_COOKIE['token'])) {
-            $user = $this->userService->findUserByToken($_COOKIE['token']);
-            Application::$auth->setParams($user);
-        }
+        $this->setParams();
     }
 
     public function getUserRoles(): array
@@ -33,8 +30,8 @@ class Controller
 //            $userRoles = $this->userService->getUserRoleById((int)$_SESSION['id_user']);
 //            if($userRoles){
 //                foreach ($userRoles as $userRole) {
-            foreach ($_SESSION['roles'] as $role) {
-                $roles[] = $role;
+            foreach ($_SESSION['roles'] as $data) {
+                $roles[] = $data['role'];
             }
 //            }
         }
@@ -45,5 +42,19 @@ class Controller
     public function getActionsPermissions(string $methodName): array
     {
         return $this->actionsPermissions[$methodName] ?? [];
+    }
+
+    /** Установка параметров
+     * @throws Exception
+     */
+    private function setParams(): void
+    {
+        if (empty($_SESSION) && isset($_COOKIE['token'])) {
+            $user = $this->userService->findUserByToken($_COOKIE['token']);
+            Application::$auth->setParams($user);
+        }
+        if (isset($_SESSION['id_user'])) {
+
+        }
     }
 }

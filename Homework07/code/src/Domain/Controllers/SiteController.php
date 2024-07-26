@@ -9,6 +9,9 @@ class SiteController extends Controller
 {
 
     private string $prefix = 'site/';
+    protected array $actionsPermissions = [
+        'actionInfo' => ['admin'],
+    ];
 
     /**
      * Информация о сайте
