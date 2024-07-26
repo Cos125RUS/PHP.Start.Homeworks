@@ -12,7 +12,7 @@ class RoleRepository extends Repository implements IRoleRepository
      */
     public function findUserRoles(int $id): bool|array
     {
-        $sql = "SELECT * FROM user_roles WHERE user_id = :id";
+        $sql = "SELECT role FROM user_roles WHERE user_id = :id";
         $handler = $this->executeQuery($sql, ['id' => $id]);
         return $handler->fetchAll();
     }

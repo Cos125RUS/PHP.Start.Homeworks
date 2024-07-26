@@ -72,6 +72,11 @@ final class Application
         }
     }
 
+    /** Проверка доступности метода
+     * @param Controller $controllerInstance
+     * @param string $methodName
+     * @return bool
+     */
     private function checkAccessToMethod(Controller $controllerInstance, string $methodName): bool {
         $userRoles = $controllerInstance->getUserRoles();
         $rules = $controllerInstance->getActionsPermissions($methodName);
@@ -85,6 +90,5 @@ final class Application
         }
 
         return false;
-
     }
 }

@@ -105,7 +105,9 @@ class UserService implements IUserService
         $hash = $user->getHashPassword();
         if (password_verify($password, $hash)) {
             $roles = $this->roleRepository->findUserRoles($user->getIdUser());
-            $user->setRoles($roles);
+            if ($roles) {
+                $user->setRoles($roles);
+            }
             return $user;
         } else {
             throw new Exception("Пароль указан неверно");

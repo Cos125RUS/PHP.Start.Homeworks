@@ -57,8 +57,10 @@ class AuthController extends Controller
      */
     #[NoReturn] public function actionLogout(): string
     {
-        setcookie('token');
+        setcookie('token', '', time() - 3600, '/');
         session_destroy();
+//        print_r(["cookie" => $_COOKIE, "session" => $_SESSION]);
+//        die();
         header('Location: /', true, 303);
         exit();
     }
