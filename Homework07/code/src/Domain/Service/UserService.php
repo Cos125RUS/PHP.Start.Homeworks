@@ -4,16 +4,20 @@ namespace Geekbrains\Application1\Domain\Service;
 
 use Exception;
 use Geekbrains\Application1\Domain\Models\User;
+use Geekbrains\Application1\Domain\Repository\IRoleRepository;
 use Geekbrains\Application1\Domain\Repository\IUserRepository;
+use Geekbrains\Application1\Domain\Repository\RoleRepository;
 use Geekbrains\Application1\Domain\Repository\UserRepository;
 
 class UserService implements IUserService
 {
     private IUserRepository $userRepository;
+    private IRoleRepository $roleRepository;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
+        $this->roleRepository = new RoleRepository();
     }
 
     /** Создание нового пользователя
@@ -78,13 +82,15 @@ class UserService implements IUserService
         return $this->userRepository->getByLogin($login);
     }
 
-    /** Получить из БД роль юзера по его id
+    /** Получить из БД роли юзера по его id
      * @param int $id
      * @return array|false
+     * @throws Exception
      */
     function getUserRoleById(int $id): array|false
     {
-        return $this->userRepository->getUserRoleById($id);
+        $user = $this->findUserById($id);
+        return $this->roleRepository->findUserRoles($user->getIdUser());
     }
 
     /** Авторизация пользователя
@@ -93,14 +99,26 @@ class UserService implements IUserService
      * @return User|false
      * @throws Exception
      */
-    function authUser(string $login, string $password): User|false
+    public function authUser(string $login, string $password): User|false
     {
         $user = $this->findUserByLogin($login);
         $hash = $user->getHashPassword();
         if (password_verify($password, $hash)) {
+            $roles = $this->roleRepository->findUserRoles($user->getIdUser());
+            $user->setRoles($roles);
             return $user;
         } else {
             throw new Exception("Пароль указан неверно");
         }
+    }
+
+    /** Поиск юзера по токену
+     * @param string $token
+     * @return User|false
+     * @throws Exception
+     */
+    function findUserByToken(string $token): User|false
+    {
+        return $this->userRepository->getByToken($token);
     }
 }

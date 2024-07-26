@@ -9,14 +9,13 @@ use Geekbrains\Application1\Domain\Models\User;
 use Geekbrains\Application1\Domain\Service\IUserService;
 use Geekbrains\Application1\Domain\Service\UserService;
 
-class PaymentController
+class PaymentController extends Controller
 {
     private string $prefix = 'payment/';
-    private IUserService $userService;
 
     public function __construct()
     {
-        $this->userService = new UserService();
+        parent::__construct();
     }
 
 

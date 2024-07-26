@@ -2,6 +2,7 @@
 
 namespace Geekbrains\Application1\Domain\Controllers;
 
+use Exception;
 use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Domain\Service\IUserService;
 use Geekbrains\Application1\Domain\Service\UserService;
@@ -11,30 +12,38 @@ class Controller
     protected array $actionsPermissions = [];
     protected IUserService $userService;
 
+    /**
+     * @throws Exception
+     */
     public function __construct()
     {
-
         $this->userService = new UserService();
+        if (empty($_SESSION) && isset($_COOKIE['token'])) {
+            $user = $this->userService->findUserByToken($_COOKIE['token']);
+            Application::$auth->setParams($user);
+        }
     }
 
-    public function getUserRoles(): array{
+    public function getUserRoles(): array
+    {
         $roles = [];
         $roles[] = 'user';
 
-        if(isset($_SESSION['id_user'])){
-            $userRoles = $this->userService->getUserRoleById((int)$_SESSION['id_user']);
-
-            if($userRoles){
-                foreach ($userRoles as $userRole) {
-                    $roles[] = $userRole['role'];
-                }
+        if (isset($_SESSION['id_user'])) {
+//            $userRoles = $this->userService->getUserRoleById((int)$_SESSION['id_user']);
+//            if($userRoles){
+//                foreach ($userRoles as $userRole) {
+            foreach ($_SESSION['roles'] as $role) {
+                $roles[] = $role;
             }
+//            }
         }
 
         return $roles;
     }
 
-    public function getActionsPermissions(string $methodName): array {
+    public function getActionsPermissions(string $methodName): array
+    {
         return $this->actionsPermissions[$methodName] ?? [];
     }
 }

@@ -9,11 +9,13 @@ class User
     private ?string $user_lastname;
     private ?int $user_birthday_timestamp;
     private ?string $login;
-   private ?string $hash_password;
-
+    private ?string $hash_password;
+    private ?array $roles;
+    private ?string $token;
 
     public function __construct(string $name = null, string $lastName = null, int $birthday = null,
-                                int $id_user = null, string $login = null, string $hash_password = null)
+                                int    $id_user = null, string $login = null, string $hash_password = null,
+                                string $token = null)
     {
         $this->user_name = $name;
         $this->user_lastname = $lastName;
@@ -21,6 +23,18 @@ class User
         $this->id_user = $id_user;
         $this->login = $login;
         $this->hash_password = $hash_password;
+        $this->token = $token;
+        $this->roles = [];
+    }
+
+    public function getToken(): ?string
+    {
+        return $this->token;
+    }
+
+    public function setToken(?string $token): void
+    {
+        $this->token = $token;
     }
 
     public function getLogin(): ?string
@@ -160,4 +174,31 @@ class User
         $this->user_birthday_timestamp = $user_birthday_timestamp;
     }
 
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(?array $roles): void
+    {
+        $this->roles = $roles;
+    }
+
+    /** Добавить роль
+     * @param string $role
+     * @return void
+     */
+    public function addRole(string $role): void
+    {
+        $this->roles[] = $role;
+    }
+
+    /** Удалить роль
+     * @param string $role
+     * @return void
+     */
+    public function deleteRole(string $role): void
+    {
+        array_splice($this->roles, array_search($role, $this->roles), 1);
+    }
 }

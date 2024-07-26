@@ -37,8 +37,12 @@ class Render
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['title'] = $templateVariables['title'] ?? 'Имя страницы';
 
-        $templateVariables['auth'] = !empty($_SESSION['id_user']);
         $templateVariables['time'] = time();
+
+        if (!empty($_SESSION['id_user'])) {
+            $templateVariables['auth'] = true;
+            $templateVariables['login'] = $_SESSION['login'];
+        }
 
         return $template->render($templateVariables);
     }

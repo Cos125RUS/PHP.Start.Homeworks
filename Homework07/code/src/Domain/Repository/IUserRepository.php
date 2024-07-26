@@ -12,5 +12,5 @@ interface IUserRepository
     function getByLogin(string $login) : User|null;
     function update(User $user): User;
     function delete(int $id): bool;
-    function getUserRoleById(int $id) : array|false;
+    function getByToken(string $token) : User|null;
 }

@@ -5,7 +5,7 @@ namespace Geekbrains\Application1\Domain\Controllers;
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\Info;
 
-class SiteController
+class SiteController extends Controller
 {
 
     private string $prefix = 'site/';
