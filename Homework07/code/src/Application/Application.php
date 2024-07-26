@@ -24,9 +24,7 @@ final class Application
 
     public function run(): string
     {
-        if (empty($_COOKIE['PHPSESSID'])) {
-            session_start();
-        }
+        session_start();
 
         $routeArray = explode('/', $_SERVER['REQUEST_URI']);
 

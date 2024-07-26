@@ -6,18 +6,20 @@ use Exception;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
 
-class Render {
+class Render
+{
 
     private string $viewFolder;
     private FilesystemLoader $loader;
     private Environment $environment;
 
 
-    public function __construct(){
-        $this->viewFolder=Application::$config->get()['path']['view'];
+    public function __construct()
+    {
+        $this->viewFolder = Application::$config->get()['path']['view'];
         $this->loader = new FilesystemLoader(dirname($_SERVER['DOCUMENT_ROOT']) . $this->viewFolder);
         $this->environment = new Environment($this->loader, [
-           // 'cache' => $_SERVER['DOCUMENT_ROOT'].'/cache/',
+            // 'cache' => $_SERVER['DOCUMENT_ROOT'].'/cache/',
         ]);
     }
 
@@ -35,7 +37,7 @@ class Render {
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['title'] = $templateVariables['title'] ?? 'Имя страницы';
 
-        $templateVariables['auth'] = false;
+        $templateVariables['auth'] = !empty($_SESSION['id_user']);
         $templateVariables['time'] = time();
 
         return $template->render($templateVariables);
