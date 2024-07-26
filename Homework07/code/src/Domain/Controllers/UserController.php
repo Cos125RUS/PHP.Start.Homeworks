@@ -125,6 +125,7 @@ class UserController
     /**
      * Добавление пользователя через аргументы url
      * @return string
+     * @Depricated
      */
     public function actionSave(): string
     {
@@ -145,6 +146,7 @@ class UserController
 
     /** Обновление данных пользователя через url
      * @throws Exception
+     * @Depricated
      */
     public function actionUpdate(): string
     {
@@ -192,6 +194,11 @@ class UserController
     private function newUser(string $name, string $lastname, string $birthday): string
     {
         try {
+            foreach ([$name, $lastname, $birthday] as $requestData) {
+                if (!Validator::validateRequestData($requestData)) {
+                    throw new Exception("Попытка отправки тегов");
+                }
+            }
             $user = $this->userService->createUser($name, $lastname, $birthday);
             return $this->supportRender->printMessage("Пользователь добавлен",
                 "Пользователь {$user->getUserName()} {$user->getUserLastname()} добавлен");

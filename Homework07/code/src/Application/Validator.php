@@ -17,4 +17,13 @@ class Validator
         return array_key_exists($key, $_GET);
     }
 
+    /** Проверка входящих данных на наличие скриптов
+     * @param string $requestData
+     * @return bool
+     */
+    public static function validateRequestData(string $requestData): bool
+    {
+        return preg_match('/<.*>/g', $requestData);
+    }
+
 }
