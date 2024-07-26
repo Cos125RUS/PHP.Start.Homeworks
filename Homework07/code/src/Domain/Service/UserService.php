@@ -4,11 +4,12 @@ namespace Geekbrains\Application1\Domain\Service;
 
 use Exception;
 use Geekbrains\Application1\Domain\Models\User;
+use Geekbrains\Application1\Domain\Repository\IUserRepository;
 use Geekbrains\Application1\Domain\Repository\UserRepository;
 
-class UserService
+class UserService implements IUserService
 {
-    private UserRepository $userRepository;
+    private IUserRepository $userRepository;
 
     public function __construct()
     {

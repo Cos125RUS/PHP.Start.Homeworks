@@ -5,7 +5,7 @@ namespace Geekbrains\Application1\Domain\Render;
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\User;
 
-class SupportRender
+class SupportRender implements ISupportRender
 {
     private string $prefix = 'support/';
     private Render $render;

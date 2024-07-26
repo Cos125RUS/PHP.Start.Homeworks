@@ -11,7 +11,7 @@ use PDOStatement;
 /**
  * Класс для работы с таблицей Юзеров в базе данных
  */
-class UserRepository
+class UserRepository implements IUserRepository
 {
     /**
      * @var PDO База данных

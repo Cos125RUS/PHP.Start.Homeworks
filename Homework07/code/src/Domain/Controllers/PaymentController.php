@@ -6,12 +6,13 @@ use Exception;
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\Payment;
 use Geekbrains\Application1\Domain\Models\User;
+use Geekbrains\Application1\Domain\Service\IUserService;
 use Geekbrains\Application1\Domain\Service\UserService;
 
 class PaymentController
 {
     private string $prefix = 'payment/';
-    private UserService $userService;
+    private IUserService $userService;
 
     public function __construct()
     {

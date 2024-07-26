@@ -5,7 +5,7 @@ namespace Geekbrains\Application1\Domain\Render;
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\User;
 
-class UserRender
+class UserRender implements IUserRender
 {
     private string $prefix = 'user/';
     private Render $render;
@@ -66,28 +66,4 @@ class UserRender
                 'href' => '/user/add'
             ]);
     }
-
-//    /** Отображение пустого списка
-//     * @return string
-//     */
-//    public function renderEmptyList(): string
-//    {
-//        return $this->render->renderPage($this->prefix . 'user-empty.twig',
-//            [
-//                'title' => 'Список пользователей в хранилище',
-//                'message' => "Список пользователей пуст",
-//                'href' => '/user/add'
-//            ]);
-//    }
-//
-//    public function renderUsersList(array $users): string
-//    {
-//        return $this->render->renderPage(
-//            $this->prefix . 'user-index.twig',
-//            [
-//                'title' => 'Список пользователей в хранилище',
-//                'users' => $users,
-//                'href' => '/user/add'
-//            ]);
-//    }
 }

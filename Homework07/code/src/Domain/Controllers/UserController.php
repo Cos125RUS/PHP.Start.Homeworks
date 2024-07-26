@@ -3,19 +3,20 @@
 namespace Geekbrains\Application1\Domain\Controllers;
 
 use Exception;
-use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Application\Validator;
-use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\User;
+use Geekbrains\Application1\Domain\Render\ISupportRender;
+use Geekbrains\Application1\Domain\Render\IUserRender;
 use Geekbrains\Application1\Domain\Render\SupportRender;
 use Geekbrains\Application1\Domain\Render\UserRender;
+use Geekbrains\Application1\Domain\Service\IUserService;
 use Geekbrains\Application1\Domain\Service\UserService;
 
 class UserController
 {
-    private UserService $userService;
-    private UserRender $userRender;
-    private SupportRender $supportRender;
+    private IUserService $userService;
+    private IUserRender $userRender;
+    private ISupportRender $supportRender;
 
     public function __construct()
     {
