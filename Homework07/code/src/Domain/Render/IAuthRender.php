@@ -4,5 +4,6 @@ namespace Geekbrains\Application1\Domain\Render;
 
 interface IAuthRender
 {
-    function renderLogin(string $title, string $subtitle, string $action, string $login = ""): string;
+    function renderAuthForm(string $templateName, string $title, string $subtitle, string $action,
+                            string $login = ""): string;
 }

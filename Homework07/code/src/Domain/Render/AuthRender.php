@@ -8,6 +8,10 @@ class AuthRender implements IAuthRender
 {
     private string $prefix = 'auth/';
     private Render $render;
+    private array $templates = [
+        'auth' => 'auth-login.twig',
+        'reg' => 'auth-registration.twig'
+    ];
 
     public function __construct()
     {
@@ -15,16 +19,22 @@ class AuthRender implements IAuthRender
     }
 
     /** Отрисовка страницы авторизации
+     * @param string $template
+     * @param string $title
+     * @param string $subtitle
+     * @param string $action
+     * @param string $login
      * @return string
      */
-    public function renderLogin(string $title, string $subtitle, string $action, string $login = ""): string
+    public function renderAuthForm(string $templateName, string $title, string $subtitle, string $action,
+                                   string $login = ""): string
     {
-        return $this->render->renderPage($this->prefix . 'auth-login.twig',
-        [
-            'title' => $title,
-            'subtitle' => $subtitle,
-            'action' => $action,
-            'login' => $login,
-        ]);
+        return $this->render->renderPage($this->prefix . $this->templates[$templateName],
+            [
+                'title' => $title,
+                'subtitle' => $subtitle,
+                'action' => $action,
+                'login' => $login,
+            ]);
     }
 }

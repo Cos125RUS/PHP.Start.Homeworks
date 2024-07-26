@@ -15,6 +15,7 @@ class AuthController extends Controller
         'actionAuthentication' => ['user'],
         'actionLogin' => ['user'],
         'actionLogout' => ['user'],
+        'actionRegistration' => ['user'],
     ];
 
     public function __construct()
@@ -48,8 +49,16 @@ class AuthController extends Controller
      */
     public function actionLogin(): string
     {
-        return $this->authRender->renderLogin("Вход", "Введите логин и пароль",
+        return $this->authRender->renderAuthForm("auth", "Вход", "Введите логин и пароль",
             "/auth/authentication", !empty($_SESSION['login']) ? $_SESSION['login'] : "");
+    }
+
+    /** Форма регистрации
+     * @return string
+     */
+    public function actionRegistration(): string
+    {
+        return $this->authRender->renderAuthForm("reg", "Вход", "Введите логин и пароль", "/auth/creation");
     }
 
     /** Разлогирование
@@ -59,8 +68,6 @@ class AuthController extends Controller
     {
         setcookie('token', '', time() - 3600, '/');
         session_destroy();
-//        print_r(["cookie" => $_COOKIE, "session" => $_SESSION]);
-//        die();
         header('Location: /', true, 303);
         exit();
     }

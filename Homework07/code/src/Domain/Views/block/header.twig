@@ -9,10 +9,12 @@
     <div class="options">
         {% if auth %}
             <div class="user_info">
-                <p class="login">{{ login }}</p><a href="/auth/logout">Выйти</a>
+                <p class="login">{{ login }}</p><a href="/auth/logout">Выход</a>
             </div>
         {% else %}
-            <a href="/auth/login">Войти</a>
+            <div>
+                <a href="/auth/login">Вход</a> / <a href="/auth/registration">Регистрация</a>
+            </div>
         {% endif %}
         <div class="time">{{ time | date("H:i") }}</div>
     </div>
