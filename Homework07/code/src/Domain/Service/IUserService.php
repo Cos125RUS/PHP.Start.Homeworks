@@ -8,8 +8,10 @@ interface IUserService
 {
     function createUser(string $name, string $lastname, string $birthday): User;
     function getAllUsersFromStorage(): bool|array;
-    function findUserByUd(int $id) : User;
+    function findUserById(int $id) : User;
+    function findUserByLogin(string $login) : User;
     function updateUser(User $user) : User;
     function deleteFromStorage(int $id) : bool;
+    function getUserRoleById(int $id) : array|false;
 
 }

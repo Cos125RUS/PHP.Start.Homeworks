@@ -105,12 +105,25 @@ class UserRepository implements IUserRepository
         return true;
     }
 
+    /** Поиск по имени пользователя
+     * @param string $login
+     * @return User|null
+     */
+    function getByLogin(string $login): User|null
+    {
+        $sql = "SELECT id_user, user_name, user_lastname, password_hash FROM users WHERE login = :login";
+
+        $handler = $this->executeQuery($sql);
+        $this->setFetchModeToClass($handler);
+        return $handler->fetch();
+    }
+
     /** Выполнение запроса к БД
      * @param string $sql
      * @param array $params
      * @return bool|PDOStatement
      */
-    private function executeQuery(string $sql, array $params): bool|PDOStatement
+    private function executeQuery(string $sql, array $params = []): bool|PDOStatement
     {
         $handler = $this->storage->prepare($sql);
         $handler->execute($params);
@@ -121,9 +134,19 @@ class UserRepository implements IUserRepository
      * @param PDOStatement $handler
      * @return void
      */
-
     private function setFetchModeToClass(PDOStatement $handler): void
     {
         $handler->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'Geekbrains\Application1\Domain\Models\User');
+    }
+
+    /** Получить роль юзера по id
+     * @param int $id
+     * @return array|false
+     */
+    function getUserRoleById(int $id): array|false
+    {
+        $sql = "SELECT role FROM users WHERE id_user = :id";
+        $handler = $this->executeQuery($sql, ["id" => $id]);
+        return $handler->fetchAll();
     }
 }

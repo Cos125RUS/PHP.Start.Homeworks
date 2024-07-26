@@ -42,7 +42,7 @@ class UserService implements IUserService
      * @return User
      * @throws Exception
      */
-    public function findUserByUd(int $id) : User
+    public function findUserById(int $id) : User
     {
         $user = $this->userRepository->getById($id);
         if ($user) {
@@ -67,5 +67,23 @@ class UserService implements IUserService
     public function deleteFromStorage(int $id) : bool
     {
         return $this->userRepository->delete($id);
+    }
+
+    /** Поиск пользователя по логину
+     * @param string $login
+     * @return User
+     */
+    function findUserByLogin(string $login): User
+    {
+        return $this->userRepository->getByLogin($login);
+    }
+
+    /** Получить из БД роль юзера по его id
+     * @param int $id
+     * @return array|false
+     */
+    function getUserRoleById(int $id): array|false
+    {
+        return $this->userRepository->getUserRoleById($id);
     }
 }

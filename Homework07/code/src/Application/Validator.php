@@ -23,7 +23,7 @@ class Validator
      */
     public static function validateRequestData(string $requestData): bool
     {
-        return preg_match('/<.*>/g', $requestData);
+        return preg_match('/<.*>/', $requestData);
     }
 
 }

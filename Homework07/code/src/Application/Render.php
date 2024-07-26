@@ -35,6 +35,7 @@ class Render {
         $templateVariables['content_template_name'] = $contentTemplateName;
         $templateVariables['title'] = $templateVariables['title'] ?? 'Имя страницы';
 
+        $templateVariables['auth'] = false;
         $templateVariables['time'] = time();
 
         return $template->render($templateVariables);

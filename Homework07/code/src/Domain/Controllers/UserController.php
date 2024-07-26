@@ -9,18 +9,15 @@ use Geekbrains\Application1\Domain\Render\ISupportRender;
 use Geekbrains\Application1\Domain\Render\IUserRender;
 use Geekbrains\Application1\Domain\Render\SupportRender;
 use Geekbrains\Application1\Domain\Render\UserRender;
-use Geekbrains\Application1\Domain\Service\IUserService;
-use Geekbrains\Application1\Domain\Service\UserService;
 
-class UserController
+class UserController extends Controller
 {
-    private IUserService $userService;
     private IUserRender $userRender;
     private ISupportRender $supportRender;
 
     public function __construct()
     {
-        $this->userService = new UserService();
+        parent::__construct();
         $this->userRender = new UserRender();
         $this->supportRender = new SupportRender();
     }
@@ -178,7 +175,7 @@ class UserController
     {
         $id = Validator::checkId();
         if ($id) {
-            return $this->userService->findUserByUd($id);
+            return $this->userService->findUserById($id);
         } else {
             throw new Exception("id указан неверно");
         }

@@ -40,7 +40,7 @@ class PaymentController
         $render = new Render();
         $id = key_exists('id', $_GET) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
 
-        if (!$this->userService->findUserByUd($id)) throw new Exception("Пользователь не существует");
+        if (!$this->userService->findUserById($id)) throw new Exception("Пользователь не существует");
         $payments = Payment::getById($id);
         return $render->renderPage($this->prefix . 'payment-find.twig', [
             'title' => 'Страница платежей выбранного юзера',

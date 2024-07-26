@@ -9,12 +9,12 @@ class UserRender implements IUserRender
 {
     private string $prefix = 'user/';
     private Render $render;
-    private array $usersList;
+    private array $usersListOptions;
 
     public function __construct()
     {
         $this->render = new Render();
-        $this->usersList = [
+        $this->usersListOptions = [
             "empty" => [
                 "template" => "user-empty.twig",
                 'message' => "Список пользователей пуст"
@@ -56,14 +56,14 @@ class UserRender implements IUserRender
      */
     public function renderUsersList(string $mode, array $users = []): string
     {
-        $data = $this->usersList[$mode];
+        $data = $this->usersListOptions[$mode];
         return $this->render->renderPage(
             $this->prefix . $data["template"],
             [
                 'title' => "Список пользователей",
                 'message' => $data["message"],
                 'users' => $users,
-                'href' => '/user/add'
+                'href' => '/user/add',
             ]);
     }
 }

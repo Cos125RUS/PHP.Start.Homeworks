@@ -6,5 +6,14 @@
         <a href="/about">О нас</a>
         <a href="/site/info">Информация о сервере</a>
     </nav>
-    <div class="time">{{ time | date("H:i") }}</div>
+    <div class="options">
+        {% if auth %}
+            <div class="user_info">
+                <p>{{ login }}</p><a href="/auth/logout">Выйти</a>
+            </div>
+        {% else %}
+            <a href="/auth/login">Войти</a>
+        {% endif %}
+        <div class="time">{{ time | date("H:i") }}</div>
+    </div>
 </header>

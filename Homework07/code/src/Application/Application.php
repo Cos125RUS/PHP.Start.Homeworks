@@ -12,16 +12,22 @@ final class Application
     private string $appNamespace;
     public static Config $config;
     public static Storage $storage;
+    public static Auth $auth;
 
-    public function __construct(){
+    public function __construct()
+    {
         Application::$config = new Config();
-        Application::$storage = new Storage();
         $this->appNamespace = self::$config->get()['namespace']['app'];
+        Application::$storage = new Storage();
+        Application::$auth = new Auth();
     }
-
 
     public function run(): string
     {
+        if (empty($_COOKIE['PHPSESSID'])) {
+            session_start();
+        }
+
         $routeArray = explode('/', $_SERVER['REQUEST_URI']);
 
         if (isset($routeArray[1]) && $routeArray[1] != '') {

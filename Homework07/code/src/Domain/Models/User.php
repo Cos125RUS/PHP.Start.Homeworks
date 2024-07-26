@@ -2,25 +2,45 @@
 
 namespace Geekbrains\Application1\Domain\Models;
 
-use Exception;
-use Geekbrains\Application1\Application\Application;
-use Geekbrains\Application1\Application\Validator;
-use \PDO;
-
 class User
 {
     private ?int $id_user;
     private ?string $user_name;
     private ?string $user_lastname;
     private ?int $user_birthday_timestamp;
+    private ?string $login;
+   private ?string $hash_password;
 
 
-    public function __construct(string $name = null, string $lastName = null, int $birthday = null, int $id_user = null)
+    public function __construct(string $name = null, string $lastName = null, int $birthday = null,
+                                int $id_user = null, string $login = null, string $hash_password = null)
     {
         $this->user_name = $name;
         $this->user_lastname = $lastName;
         $this->user_birthday_timestamp = $birthday;
         $this->id_user = $id_user;
+        $this->login = $login;
+        $this->hash_password = $hash_password;
+    }
+
+    public function getLogin(): ?string
+    {
+        return $this->login;
+    }
+
+    public function setLogin(?string $login): void
+    {
+        $this->login = $login;
+    }
+
+    public function getHashPassword(): ?string
+    {
+        return $this->hash_password;
+    }
+
+    public function setHashPassword(?string $hash_password): void
+    {
+        $this->hash_password = $hash_password;
     }
 
     public function getIdUser(): ?int
@@ -106,6 +126,28 @@ class User
         if (array_intersect([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, '=', '+', '/', '*', '~', '?', '|', '\\', '<', '>', '{', '}', '[', ']', ':', ';', '!'], $arr)) return false;
 
         return true;
+    }
+
+    /** Валидация логина
+     * @param string $login
+     * @return bool
+     */
+    private static function validateLogin(string $login): bool
+    {
+        $pattern = '/^(?=.*\S)(?!<.*>).{3,20}$/';
+        return preg_match($pattern, $login) && preg_match('/\s/', $login);
+    }
+
+    /** Валидация пароля
+     * @param string $password
+     * @return bool
+     */
+    private static function validatePassword(string $password): bool
+    {
+        $pattern = '/^(?=.*\d)(?=.*\w)(?=.*\S)(?!\s).{8,16}$/';
+        return mb_strtolower($password) !== 'pass' &&
+            mb_strtolower($password) !== 'password' &&
+            preg_match($pattern, $password);
     }
 
     public function setUserName(?string $user_name): void

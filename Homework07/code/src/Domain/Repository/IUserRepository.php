@@ -9,7 +9,8 @@ interface IUserRepository
     function getAllUsers(): array|false;
     function save(User $user): User;
     function getById(int $id) : User|null;
+    function getByLogin(string $login) : User|null;
     function update(User $user): User;
     function delete(int $id): bool;
-
+    function getUserRoleById(int $id) : array|false;
 }
