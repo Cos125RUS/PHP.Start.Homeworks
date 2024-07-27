@@ -14,8 +14,8 @@ class User
     private ?string $token;
 
     public function __construct(string $name = null, string $lastName = null, int $birthday = null,
-                                int    $id_user = null, string $login = null, string $hash_password = null,
-                                string $token = null)
+                                string $login = null, string $hash_password = null,
+                                string $token = null, int $id_user = null)
     {
         $this->user_name = $name;
         $this->user_lastname = $lastName;
@@ -146,17 +146,17 @@ class User
      * @param string $login
      * @return bool
      */
-    private static function validateLogin(string $login): bool
+    public static function validateLogin(string $login): bool
     {
         $pattern = '/^(?=.*\S)(?!<.*>).{3,20}$/';
         return preg_match($pattern, $login) && preg_match('/\s/', $login);
     }
 
-    /** Валидация пароля
+    /** Проверка надёжности пароля
      * @param string $password
      * @return bool
      */
-    private static function validatePassword(string $password): bool
+    public static function validatePassword(string $password): bool
     {
         $pattern = '/^(?=.*\d)(?=.*\w)(?=.*\S)(?!\s).{8,16}$/';
         return mb_strtolower($password) !== 'pass' &&

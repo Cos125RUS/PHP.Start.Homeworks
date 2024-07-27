@@ -15,7 +15,7 @@ class Auth
      * @param string $password
      * @return string
      */
-    public static function getPasswordHash(string $password): string {
+    public function getPasswordHash(string $password): string {
         return password_hash($password, PASSWORD_BCRYPT);
     }
 

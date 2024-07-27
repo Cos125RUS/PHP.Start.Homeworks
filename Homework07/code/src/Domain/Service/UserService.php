@@ -3,6 +3,8 @@
 namespace Geekbrains\Application1\Domain\Service;
 
 use Exception;
+use Geekbrains\Application1\Application\Application;
+use Geekbrains\Application1\Application\Auth;
 use Geekbrains\Application1\Domain\Models\User;
 use Geekbrains\Application1\Domain\Repository\IRoleRepository;
 use Geekbrains\Application1\Domain\Repository\IUserRepository;
@@ -21,57 +23,68 @@ class UserService implements IUserService
     }
 
     /** Создание нового пользователя
+     * @param string $name
+     * @param string $lastname
+     * @param string $birthday
+     * @param string $login
+     * @param string $password
+     * @return User
      * @throws Exception
      */
-    public function createUser(string $name, string $lastname, string $birthday): User
+    public function createUser(string $name, string $lastname, string $birthday,
+                               string $login, string $password): User
     {
         try {
-            $user = new User($name, $lastname, strtotime($birthday));
+            $hash_password = Application::$auth->getPasswordHash($password);
+            $user = new User($name, $lastname, strtotime($birthday), $login, $hash_password);
             return $this->userRepository->save($user);
-        } catch (Exception $e) {
-            throw new Exception("Ошибка записи. Пользователь $name $lastname не добавлен");
         }
+
+catch
+(Exception $e) {
+    throw new Exception("Ошибка записи. Пользователь $name $lastname не добавлен");
+}
     }
 
     /** Извлечь всех юзеров из БД
      * @return array|false
      */
     public function getAllUsersFromStorage(): bool|array
-    {
-        return $this->userRepository->getAllUsers();
-    }
+{
+    return $this->userRepository->getAllUsers();
+}
 
     /** Поиск пользователя в БД по id
      * @param int $id
      * @return User
      * @throws Exception
      */
-    public function findUserById(int $id) : User
-    {
-        $user = $this->userRepository->getById($id);
-        if ($user) {
-            return $user;
-        } else {
-            throw new Exception("Пользователь не найден");
-        }
+    public function findUserById(int $id): User
+{
+    $user = $this->userRepository->getById($id);
+    if ($user) {
+        return $user;
+    } else {
+        throw new Exception("Пользователь не найден");
     }
+}
 
     /** Обновление данных пользователя в БД
      * @throws Exception
      */
-    public function updateUser(User $user) : User
-    {
-        return $this->userRepository->update($user);
-    }
+    public function updateUser(User $user): User
+{
+    return $this->userRepository->update($user);
+}
 
     /** Удаление пользователя из БД
      * @param int $id
      * @return bool
      */
-    public function deleteFromStorage(int $id) : bool
-    {
-        return $this->userRepository->delete($id);
-    }
+    public function deleteFromStorage(int $id): bool
+{
+    return $this->userRepository->delete($id);
+}
 
     /** Поиск пользователя по логину
      * @param string $login
@@ -100,19 +113,19 @@ class UserService implements IUserService
      * @throws Exception
      */
     public function authUser(string $login, string $password): User|false
-    {
-        $user = $this->findUserByLogin($login);
-        $hash = $user->getHashPassword();
-        if (password_verify($password, $hash)) {
-            $roles = $this->roleRepository->findUserRoles($user->getIdUser());
-            if ($roles) {
-                $user->setRoles($roles);
-            }
-            return $user;
-        } else {
-            throw new Exception("Пароль указан неверно");
+{
+    $user = $this->findUserByLogin($login);
+    $hash = $user->getHashPassword();
+    if (password_verify($password, $hash)) {
+        $roles = $this->roleRepository->findUserRoles($user->getIdUser());
+        if ($roles) {
+            $user->setRoles($roles);
         }
+        return $user;
+    } else {
+        throw new Exception("Пароль указан неверно");
     }
+}
 
     /** Поиск юзера по токену
      * @param string $token

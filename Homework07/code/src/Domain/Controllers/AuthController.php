@@ -4,31 +4,37 @@ namespace Geekbrains\Application1\Domain\Controllers;
 
 use Exception;
 use Geekbrains\Application1\Application\Application;
+use Geekbrains\Application1\Application\Validator;
+use Geekbrains\Application1\Domain\Models\User;
 use Geekbrains\Application1\Domain\Render\AuthRender;
 use Geekbrains\Application1\Domain\Render\IAuthRender;
+use Geekbrains\Application1\Domain\Render\ISupportRender;
+use Geekbrains\Application1\Domain\Render\SupportRender;
 use JetBrains\PhpStorm\NoReturn;
 
 class AuthController extends Controller
 {
     private IAuthRender $authRender;
+    private ISupportRender $supportRender;
     protected array $actionsPermissions = [
         'actionAuthentication' => ['user'],
         'actionLogin' => ['user'],
         'actionLogout' => ['user'],
         'actionRegistration' => ['user'],
+        'actionCreation' => ['user'],
     ];
 
     public function __construct()
     {
         parent::__construct();
         $this->authRender = new AuthRender();
+        $this->supportRender = new SupportRender();
     }
 
     /** Аутентификация
-     * @return string
      * @throws Exception
      */
-    #[NoReturn] public function actionAuthentication(): string
+    #[NoReturn] public function actionAuthentication(): void
     {
         $user = $this->userService->authUser($_POST['login'], $_POST['password']);
         Application::$auth->setParams($user);
@@ -61,10 +67,42 @@ class AuthController extends Controller
         return $this->authRender->renderAuthForm("reg", "Вход", "Введите логин и пароль", "/auth/creation");
     }
 
-    /** Разлогирование
+    /** Создание нового пользователя
      * @return string
+     * @throws Exception
      */
-    #[NoReturn] public function actionLogout(): string
+    #[NoReturn] public function actionCreation(): string
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Validator::checkCreateUserCountParams()) {
+            if (Validator::checkConfirmPassword()) {
+                if (User::validateLogin($_POST['login']) &&
+                    User::validatePassword($_POST['password']) &&
+                    User::validateName($_POST['name']) &&
+                    User::validateName($_POST['lastname'])) {
+
+                    $user = $this->userService->createUser($_POST['name'], $_POST['lastname'],
+                        $_POST['birthday'], $_POST['login'], $_POST['password']);
+
+                    Application::$auth->setParams($user);
+
+                    header('Location: /', true, 303);
+                    exit();
+                } else {
+                    return $this->supportRender->printMessage("Некорректный ввод",
+                        "Введены некорректные данные");
+                }
+            } else {
+                return $this->supportRender->printMessage("Некорректный ввод",
+                    "Поля 'Пароль' и 'Подтверждение' не совпадают");
+            }
+        } else {
+            return "Ты как сюда попал?";
+        }
+    }
+
+    /** Разлогирование
+     */
+    #[NoReturn] public function actionLogout(): void
     {
         setcookie('token', '', time() - 3600, '/');
         session_destroy();

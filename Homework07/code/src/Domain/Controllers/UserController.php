@@ -58,7 +58,8 @@ class UserController extends Controller
             isset($_POST['name']) &&
             isset($_POST['lastname']) &&
             isset($_POST['birthday'])) {
-            return $this->newUser($_POST['name'], $_POST['lastname'], $_POST['birthday']);
+            return $this->newUser($_POST['name'], $_POST['lastname'], $_POST['birthday'],
+                $_POST['login'], $_POST['password']);
         } else {
             return "Ты как сюда попал?";
         }
@@ -196,17 +197,20 @@ class UserController extends Controller
      * @param string $name
      * @param string $lastname
      * @param string $birthday
+     * @param string $login
+     * @param string $password
      * @return string
      */
-    private function newUser(string $name, string $lastname, string $birthday): string
+    private function newUser(string $name, string $lastname, string $birthday,
+                             string $login, string $password): string
     {
         try {
-            foreach ([$name, $lastname, $birthday] as $requestData) {
+            foreach ([$name, $lastname, $birthday, $login, $password] as $requestData) {
                 if (!Validator::validateRequestData($requestData)) {
                     throw new Exception("Попытка отправки тегов");
                 }
             }
-            $user = $this->userService->createUser($name, $lastname, $birthday);
+            $user = $this->userService->createUser($name, $lastname, $birthday, $login, $password);
             return $this->supportRender->printMessage("Пользователь добавлен",
                 "Пользователь {$user->getUserName()} {$user->getUserLastname()} добавлен");
         } catch (Exception $e) {

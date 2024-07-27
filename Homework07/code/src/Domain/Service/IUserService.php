@@ -6,7 +6,8 @@ use Geekbrains\Application1\Domain\Models\User;
 
 interface IUserService
 {
-    function createUser(string $name, string $lastname, string $birthday): User;
+    function createUser(string $name, string $lastname, string $birthday,
+                        string $login, string $password): User;
     function getAllUsersFromStorage(): bool|array;
     function findUserById(int $id) : User;
     function findUserByLogin(string $login) : User;
