@@ -39,7 +39,7 @@ class AuthController extends Controller
         $user = $this->userService->authUser($_POST['login'], $_POST['password']);
         Application::$auth->setParams($user);
 
-        if ($_POST['remember'] == 'on') {
+        if (isset($_POST['remember']) && $_POST['remember'] == 'on') {
             $token = hash("sha256", $user->getLogin());
             setcookie('token', $token, time() + 3600, '/');
             $user->setToken($token);

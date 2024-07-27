@@ -4,6 +4,9 @@ namespace Geekbrains\Application1\Application;
 
 use Exception;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig\Loader\FilesystemLoader;
 
 class Render
@@ -23,6 +26,14 @@ class Render
         ]);
     }
 
+    /** Отрисовка страницы
+     * @param string $contentTemplateName
+     * @param array $templateVariables
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     public function renderPage(string $contentTemplateName = 'page-index.twig', array $templateVariables = []): string
     {
         $template = $this->environment->load('block/main.twig');
@@ -47,6 +58,9 @@ class Render
         return $template->render($templateVariables);
     }
 
+    /** Обработка ошибки 404
+     * @return void
+     */
     public static function notFound(): void
     {
         // через nginx
@@ -57,6 +71,13 @@ class Render
 //        include($page404);
     }
 
+    /** Информация об ошибках
+     * @param Exception $e
+     * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
+     */
     public static function renderExceptionPage(Exception $e): string
     {
         $render = new Render();
