@@ -33,10 +33,11 @@ class UserRender implements IUserRender
      * @param string $name
      * @param string $lastname
      * @param string|int $birthday
+     * @param string $login
      * @return string
      */
     public function renderAddForm(string $title, string $subtitle, string $action, string $name = "",
-                                  string $lastname = "", string|int $birthday = ""): string
+                                  string $lastname = "", string|int $birthday = "", string $login = ""): string
     {
         return $this->render->renderPage($this->prefix . 'user-add.twig',
             [
@@ -46,6 +47,7 @@ class UserRender implements IUserRender
                 'name' => $name,
                 'lastname' => $lastname,
                 'birthday' => $birthday,
+                'login' => $login
             ]);
     }
 

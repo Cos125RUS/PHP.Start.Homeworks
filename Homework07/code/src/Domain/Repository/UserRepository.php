@@ -34,15 +34,14 @@ class UserRepository extends Repository implements IUserRepository
      */
     public function save(User $user): User
     {
-        $sql = 'INSERT INTO users (user_name, user_lastname, user_birthday_timestamp, login, hash_passwod, token) 
-    VALUE (:user_name, :user_lastname, :user_birthday_timestamp, :login, :hash_password, :token)';
+        $sql = 'INSERT INTO users (user_name, user_lastname, user_birthday_timestamp, login, hash_password) 
+    VALUE (:user_name, :user_lastname, :user_birthday_timestamp, :login, :hash_password)';
         $params = [
             "user_name" => $user->getUserName(),
             "user_lastname" => $user->getUserLastname(),
             "user_birthday_timestamp" => $user->getUserBirthdayTimestamp(),
             "login" => $user->getLogin(),
-            "hash_password" => $user->getHashPassword(),
-            "token" => $user->getToken()
+            "hash_password" => $user->getHashPassword()
         ];
         $this->executeQuery($sql, $params);
         $user->setIdUser($this->storage->lastInsertId());

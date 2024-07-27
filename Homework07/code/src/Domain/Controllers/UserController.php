@@ -123,7 +123,8 @@ class UserController extends Controller
 
         return $this->userRender->renderAddForm('Обновление пользователя',
             'Изменение пользовательских данных', "/user/rewrite/?id={$user->getIdUser()}",
-            $user->getUserName(), $user->getUserLastname(), $user->getUserBirthdayTimestamp());
+            $user->getUserName(), $user->getUserLastname(), $user->getUserBirthdayTimestamp(),
+            $user->getLogin());
     }
 
 //endregion forms
@@ -145,7 +146,7 @@ class UserController extends Controller
         if (User::validateName($_GET['name']) &&
             User::validateName($_GET['lastname']) &&
             User::validateDate($_GET['birthday'])) {
-            return $this->newUser($_GET['name'], $_GET['lastname'], $_GET['birthday']);
+            return $this->newUser($_GET['name'], $_GET['lastname'], $_GET['birthday'], $_GET['login'], $_GET['password']);
         } else {
             return $this->supportRender->printMessage("Некорректный ввод",
                 "Данные введены некорректно");
@@ -206,7 +207,7 @@ class UserController extends Controller
     {
         try {
             foreach ([$name, $lastname, $birthday, $login, $password] as $requestData) {
-                if (!Validator::validateRequestData($requestData)) {
+                if (Validator::validateRequestData($requestData)) {
                     throw new Exception("Попытка отправки тегов");
                 }
             }

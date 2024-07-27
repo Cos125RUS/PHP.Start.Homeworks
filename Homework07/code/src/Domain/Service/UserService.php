@@ -38,21 +38,19 @@ class UserService implements IUserService
             $hash_password = Application::$auth->getPasswordHash($password);
             $user = new User($name, $lastname, strtotime($birthday), $login, $hash_password);
             return $this->userRepository->save($user);
+        } catch
+        (Exception) {
+            throw new Exception("Ошибка записи. Пользователь $name $lastname не добавлен");
         }
-
-catch
-(Exception $e) {
-    throw new Exception("Ошибка записи. Пользователь $name $lastname не добавлен");
-}
     }
 
     /** Извлечь всех юзеров из БД
      * @return array|false
      */
     public function getAllUsersFromStorage(): bool|array
-{
-    return $this->userRepository->getAllUsers();
-}
+    {
+        return $this->userRepository->getAllUsers();
+    }
 
     /** Поиск пользователя в БД по id
      * @param int $id
@@ -60,31 +58,31 @@ catch
      * @throws Exception
      */
     public function findUserById(int $id): User
-{
-    $user = $this->userRepository->getById($id);
-    if ($user) {
-        return $user;
-    } else {
-        throw new Exception("Пользователь не найден");
+    {
+        $user = $this->userRepository->getById($id);
+        if ($user) {
+            return $user;
+        } else {
+            throw new Exception("Пользователь не найден");
+        }
     }
-}
 
     /** Обновление данных пользователя в БД
      * @throws Exception
      */
     public function updateUser(User $user): User
-{
-    return $this->userRepository->update($user);
-}
+    {
+        return $this->userRepository->update($user);
+    }
 
     /** Удаление пользователя из БД
      * @param int $id
      * @return bool
      */
     public function deleteFromStorage(int $id): bool
-{
-    return $this->userRepository->delete($id);
-}
+    {
+        return $this->userRepository->delete($id);
+    }
 
     /** Поиск пользователя по логину
      * @param string $login
@@ -113,19 +111,19 @@ catch
      * @throws Exception
      */
     public function authUser(string $login, string $password): User|false
-{
-    $user = $this->findUserByLogin($login);
-    $hash = $user->getHashPassword();
-    if (password_verify($password, $hash)) {
-        $roles = $this->roleRepository->findUserRoles($user->getIdUser());
-        if ($roles) {
-            $user->setRoles($roles);
+    {
+        $user = $this->findUserByLogin($login);
+        $hash = $user->getHashPassword();
+        if (password_verify($password, $hash)) {
+            $roles = $this->roleRepository->findUserRoles($user->getIdUser());
+            if ($roles) {
+                $user->setRoles($roles);
+            }
+            return $user;
+        } else {
+            throw new Exception("Пароль указан неверно");
         }
-        return $user;
-    } else {
-        throw new Exception("Пароль указан неверно");
     }
-}
 
     /** Поиск юзера по токену
      * @param string $token

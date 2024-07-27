@@ -74,27 +74,34 @@ class AuthController extends Controller
     #[NoReturn] public function actionCreation(): string
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && Validator::checkCreateUserCountParams()) {
-            if (Validator::checkConfirmPassword()) {
-                if (User::validateLogin($_POST['login']) &&
-                    User::validatePassword($_POST['password']) &&
-                    User::validateName($_POST['name']) &&
-                    User::validateName($_POST['lastname'])) {
-
-                    $user = $this->userService->createUser($_POST['name'], $_POST['lastname'],
-                        $_POST['birthday'], $_POST['login'], $_POST['password']);
-
-                    Application::$auth->setParams($user);
-
-                    header('Location: /', true, 303);
-                    exit();
-                } else {
-                    return $this->supportRender->printMessage("Некорректный ввод",
-                        "Введены некорректные данные");
-                }
-            } else {
+            if (!Validator::checkConfirmPassword()) {
                 return $this->supportRender->printMessage("Некорректный ввод",
                     "Поля 'Пароль' и 'Подтверждение' не совпадают");
             }
+            if (!User::validateLogin($_POST['login'])) {
+                return $this->supportRender->printMessage("Некорректный ввод",
+                    "Введён некорректный логин");
+            }
+            if (!User::validatePassword($_POST['password'])) {
+                return $this->supportRender->printMessage("Некорректный ввод",
+                    "Слишком простой пароль");
+            }
+            if (!User::validateName($_POST['name'])) {
+                return $this->supportRender->printMessage("Некорректный ввод",
+                    "Имя введено некорректно");
+            }
+            if (!User::validateName($_POST['lastname'])) {
+                return $this->supportRender->printMessage("Некорректный ввод",
+                    "Фамилия введена некорректно");
+            }
+
+            $user = $this->userService->createUser($_POST['name'], $_POST['lastname'],
+                $_POST['birthday'], $_POST['login'], $_POST['password']);
+
+            Application::$auth->setParams($user);
+
+            header('Location: /', true, 303);
+            exit();
         } else {
             return "Ты как сюда попал?";
         }

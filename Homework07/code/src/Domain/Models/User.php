@@ -149,7 +149,7 @@ class User
     public static function validateLogin(string $login): bool
     {
         $pattern = '/^(?=.*\S)(?!<.*>).{3,20}$/';
-        return preg_match($pattern, $login) && preg_match('/\s/', $login);
+        return preg_match($pattern, $login) && !preg_match('/\s/', $login);
     }
 
     /** Проверка надёжности пароля
