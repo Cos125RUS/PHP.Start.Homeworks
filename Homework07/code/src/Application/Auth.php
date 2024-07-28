@@ -3,8 +3,6 @@
 namespace Geekbrains\Application1\Application;
 
 use Geekbrains\Application1\Domain\Models\User;
-use Geekbrains\Application1\Domain\Service\IUserService;
-use Geekbrains\Application1\Domain\Service\UserService;
 
 /**
  * Аутентификация
