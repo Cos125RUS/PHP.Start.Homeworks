@@ -4,6 +4,7 @@ namespace Geekbrains\Application1\Domain\Controllers;
 
 use Exception;
 use Geekbrains\Application1\Application\Application;
+use Geekbrains\Application1\Application\FileLogger;
 use Geekbrains\Application1\Application\Validator;
 use Geekbrains\Application1\Domain\Models\User;
 use Geekbrains\Application1\Domain\Render\AuthRender;
@@ -11,10 +12,13 @@ use Geekbrains\Application1\Domain\Render\IAuthRender;
 use Geekbrains\Application1\Domain\Render\ISupportRender;
 use Geekbrains\Application1\Domain\Render\SupportRender;
 use JetBrains\PhpStorm\NoReturn;
+use Monolog\Logger;
 
 class AuthController extends Controller
 {
     private IAuthRender $authRender;
+    private Logger $logger;
+
     protected array $actionsPermissions = [
         'actionAuthentication' => ['user'],
         'actionLogin' => ['user'],
@@ -27,6 +31,7 @@ class AuthController extends Controller
     {
         parent::__construct();
         $this->authRender = new AuthRender();
+        $this->logger = FileLogger::createLogger("auth_logger", "auth-log", "auth");
     }
 
     /** Аутентификация
@@ -40,6 +45,8 @@ class AuthController extends Controller
         if (isset($_POST['remember']) && $_POST['remember'] == 'on') {
             $this->authService->giveToken($user);
         }
+
+        $this->logger->info("Пользователь <{$_POST['login']}> авторизировался на сайте");
 
         header('Location: /', true, 303);
         exit();
@@ -94,11 +101,14 @@ class AuthController extends Controller
 
             $this->authService->setParams($user);
 
+            $this->logger->info("Создан новый пользователь с ником <{$_POST['login']}>");
+
             header('Location: /', true, 303);
-            exit();
         } else {
-            return "Ты как сюда попал?";
+            $this->logger->warning("Подозрительный запрос");
+            header('Location: /404.php', true, 404);
         }
+        exit();
     }
 
     /** Обработка выхода из учётной записи пользователя
@@ -108,6 +118,9 @@ class AuthController extends Controller
     {
         $id = $_SESSION['id_user'];
         $this->authService->logout($id);
+
+        $this->logger->info("Пользователь <{$_SESSION['login']}> разлогинился");
+
         header('Location: /', true, 303);
         exit();
     }

@@ -5,21 +5,25 @@ namespace Geekbrains\Application1\Domain\Service;
 use Exception;
 use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Application\Auth;
+use Geekbrains\Application1\Application\FileLogger;
 use Geekbrains\Application1\Domain\Models\User;
 use Geekbrains\Application1\Domain\Repository\IRoleRepository;
 use Geekbrains\Application1\Domain\Repository\IUserRepository;
 use Geekbrains\Application1\Domain\Repository\RoleRepository;
 use Geekbrains\Application1\Domain\Repository\UserRepository;
+use Monolog\Logger;
 
 class UserService implements IUserService
 {
     private IUserRepository $userRepository;
     private IRoleRepository $roleRepository;
+    private Logger $logger;
 
     public function __construct()
     {
         $this->userRepository = new UserRepository();
         $this->roleRepository = new RoleRepository();
+        $this->logger = FileLogger::createLogger("user_service_logger", "user-log", "user/service");
     }
 
     /** Создание нового пользователя
@@ -37,8 +41,8 @@ class UserService implements IUserService
         try {
             $user = new User($name, $lastname, strtotime($birthday), $login, $hash_password);
             return $this->userRepository->save($user);
-        } catch
-        (Exception) {
+        } catch (Exception) {
+            $this->logger->error("Ошибка записи. Пользователь $name $lastname не добавлен");
             throw new Exception("Ошибка записи. Пользователь $name $lastname не добавлен");
         }
     }
@@ -62,6 +66,7 @@ class UserService implements IUserService
         if ($user) {
             return $user;
         } else {
+            $this->logger->error("Пользователь не найден (id: <$id>)");
             throw new Exception("Пользователь не найден");
         }
     }
@@ -86,6 +91,7 @@ class UserService implements IUserService
     /** Поиск пользователя по логину
      * @param string $login
      * @return User
+     * @throws Exception
      */
     function findUserByLogin(string $login): User
     {
@@ -120,6 +126,7 @@ class UserService implements IUserService
             }
             return $user;
         } else {
+            $this->logger->error("Пароль указан неверно (<$login> : <$password>)");
             throw new Exception("Пароль указан неверно");
         }
     }

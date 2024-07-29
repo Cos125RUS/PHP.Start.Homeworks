@@ -3,7 +3,9 @@
 namespace Geekbrains\Application1\Domain\Repository;
 
 use Exception;
+use Geekbrains\Application1\Application\FileLogger;
 use Geekbrains\Application1\Domain\Models\User;
+use Monolog\Logger;
 use PDO;
 use PDOStatement;
 
@@ -12,7 +14,15 @@ use PDOStatement;
  */
 class UserRepository extends Repository implements IUserRepository
 {
+    private Logger $logger;
     protected string $className = 'Geekbrains\Application1\Domain\Models\User';
+
+    public function __construct()
+    {
+        parent::__construct();
+        $this->logger = FileLogger::createLogger("user_repo_logger", "user-log", "user/repo");
+    }
+
 
     /** Извлечь всех юзеров
      * @return array|false
@@ -88,6 +98,7 @@ class UserRepository extends Repository implements IUserRepository
         if ($this->executeQuery($sql, $params)) {
             return $user;
         } else {
+            $this->logger->error("Ошибка обновления пользователя в БД (id: {$user->getIdUser()})");
             throw new Exception("Ошибка обновления пользователя в БД");
         }
     }
@@ -118,6 +129,7 @@ class UserRepository extends Repository implements IUserRepository
             $this->setFetchModeToClass($handler);
             return $handler->fetch();
         } catch (\Throwable) {
+            $this->logger->error("Ошибка запроса к базе данных (Login: <$login>)");
             throw new Exception("Ошибка запроса к базе данных");
         }
     }
@@ -136,6 +148,7 @@ class UserRepository extends Repository implements IUserRepository
             $this->setFetchModeToClass($handler);
             return $handler->fetch();
         } catch (\Throwable) {
+            $this->logger->error("Ошибка запроса к базе данных (Login: <$token>)");
             throw new Exception("Ошибка запроса к базе данных");
         }
     }

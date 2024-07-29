@@ -3,10 +3,10 @@
 namespace Geekbrains\Application1\Application;
 
 use Exception;
-use Geekbrains\Application1\Domain\Controllers\AbstractController;
 use Geekbrains\Application1\Domain\Controllers\Controller;
 use Geekbrains\Application1\Infrastructure\Config;
 use Geekbrains\Application1\Infrastructure\Storage;
+use Monolog\Logger;
 
 final class Application
 {
@@ -15,6 +15,7 @@ final class Application
     public static Config $config;
     public static Storage $storage;
     public static Auth $auth;
+    public static Logger $logger;
 
     public function __construct()
     {
@@ -22,6 +23,7 @@ final class Application
         $this->appNamespace = self::$config->get()['namespace']['app'];
         Application::$storage = new Storage();
         Application::$auth = new Auth();
+        Application::$logger = FileLogger::createLogger('application_logger', 'app-log', 'app');
     }
 
     /**
@@ -30,6 +32,7 @@ final class Application
     public function run(): string
     {
         session_start();
+        Application::$logger->info("новый запрос по пути {$_SERVER['REQUEST_URI']}");
 
         $routeArray = explode('/', $_SERVER['REQUEST_URI']);
 
@@ -91,4 +94,6 @@ final class Application
 
         return false;
     }
+
+
 }
