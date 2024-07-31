@@ -77,6 +77,8 @@
                     row += "<td>" + users[key].username + "</td>";
                     row += "<td>" + users[key].userlastname + "</td>";
                     row += "<td>" + users[key].userbirthday + "</td>";
+                    row += `<td><a href=/user/change/?id=${users[key].id} class="button">РЕДАКТИРОВАТЬ</a></td>`;
+                    row += `<td><button class="button del-button" id="del-${users[key].id}">В УРНОЧКУ</button></td>`;
 
                     row += "</tr>";
 

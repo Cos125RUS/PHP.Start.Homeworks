@@ -68,7 +68,7 @@ class UserController extends Controller
             isset($_POST['login']) &&
             isset($_POST['password'])) {
             $this->logger->info("Админ <{$_SESSION['login']}> создал нового пользователя 
-            (id: <{$_POST['id_user']}>, login: <{$_POST['login']}>, name: <{$_POST['name']}>, 
+            (login: <{$_POST['login']}>, name: <{$_POST['name']}>, 
             lastname: <{$_POST['lastname']}>)");
             return $this->newUser($_POST['name'], $_POST['lastname'], $_POST['birthday'],
                 $_POST['login'], $_POST['password']);
