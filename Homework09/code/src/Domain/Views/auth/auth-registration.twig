@@ -1,5 +1,4 @@
 <h4>{{ subtitle }}</h4>
-<p class="error_message">{{ error_message | nl2br }}</p>
 <form action={{ action }} method="post">
     <label>Логин:<input type="text" name="login" required value={{ login }}></label>
     <label>Пароль:<input type="password" name="password" required value={{ password }}></label>
@@ -11,3 +10,4 @@
     <br>
     <button type="submit" class="button">Отправить</button>
 </form>
+<p class="error_message">{{ error_message | nl2br }}</p>

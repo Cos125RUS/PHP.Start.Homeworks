@@ -137,7 +137,7 @@ class UserRepository extends Repository implements IUserRepository
             return $handler->fetch();
         } catch (\Throwable) {
             $this->logger->error("Ошибка запроса к базе данных (Login: <$login>)");
-            throw new Exception("Ошибка запроса к базе данных");
+            throw new Exception("Пользователь с логином '$login' не найден");
         }
     }
 

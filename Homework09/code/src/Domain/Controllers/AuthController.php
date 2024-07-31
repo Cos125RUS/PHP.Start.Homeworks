@@ -30,21 +30,27 @@ class AuthController extends Controller
     }
 
     /** Аутентификация
-     * @throws Exception
+     * @return string|null
      */
-    #[NoReturn] public function actionAuthentication(): void
+    #[NoReturn] public function actionAuthentication(): null|string
     {
-        $user = $this->userService->authUser($_POST['login'], $_POST['password']);
-        $this->authService->setParams($user);
+        try {
+            $user = $this->userService->authUser($_POST['login'], $_POST['password']);
+            $this->authService->setParams($user);
 
-        if (isset($_POST['remember']) && $_POST['remember'] == 'on') {
-            $this->authService->giveToken($user);
+            if (isset($_POST['remember']) && $_POST['remember'] == 'on') {
+                $this->authService->giveToken($user);
+            }
+
+            $this->logger->info("Пользователь <{$_POST['login']}> авторизировался на сайте");
+
+            header('Location: /', true, 303);
+            exit();
+        } catch (Exception $e) {
+            return $this->authRender->renderAuthForm("auth", "Вход", "Введите логин и пароль",
+                "/auth/authentication", !empty($_POST['login']) ? $_POST['login'] : "",
+                "", "", "", $e->getMessage());
         }
-
-        $this->logger->info("Пользователь <{$_POST['login']}> авторизировался на сайте");
-
-        header('Location: /', true, 303);
-        exit();
     }
 
     /** Форма авторизации
@@ -61,7 +67,7 @@ class AuthController extends Controller
      */
     public function actionRegistration(): string
     {
-        if(!empty($_SESSION) && isset($_SESSION['registration_error'])) {
+        if (!empty($_SESSION) && isset($_SESSION['registration_error'])) {
             return $this->authRender->renderAuthForm("reg", "Вход", "Введите логин и пароль",
                 "/auth/creation", $_SESSION['user_data']['login'], $_SESSION['user_data']['name'],
                 $_SESSION['user_data']['lastname'], $_SESSION['user_data']['birthday'],
