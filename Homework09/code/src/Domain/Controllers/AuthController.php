@@ -3,14 +3,9 @@
 namespace Geekbrains\Application1\Domain\Controllers;
 
 use Exception;
-use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Application\FileLogger;
-use Geekbrains\Application1\Application\Validator;
-use Geekbrains\Application1\Domain\Models\User;
 use Geekbrains\Application1\Domain\Render\AuthRender;
 use Geekbrains\Application1\Domain\Render\IAuthRender;
-use Geekbrains\Application1\Domain\Render\ISupportRender;
-use Geekbrains\Application1\Domain\Render\SupportRender;
 use JetBrains\PhpStorm\NoReturn;
 use Monolog\Logger;
 
@@ -82,9 +77,10 @@ class AuthController extends Controller
      */
     #[NoReturn] public function actionCreation(): string
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && Validator::checkCreateUserCountParams()) {
-            $validateErrors = Validator::checkUserData($_POST['login'], $_POST['password'],
-                $_POST['name'], $_POST['lastname'], $_POST['birthday']);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
+            $this->requestValidator->checkCreateUserCountParams()) {
+
+            $validateErrors = $this->requestValidator->checkUserData();
             if (count($validateErrors)) {
                 $errorMessage = implode("\n", $validateErrors);
                 $_SESSION['registration_error'] = $errorMessage;

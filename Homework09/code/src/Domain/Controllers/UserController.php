@@ -5,8 +5,8 @@ namespace Geekbrains\Application1\Domain\Controllers;
 use Exception;
 use Geekbrains\Application1\Application\Application;
 use Geekbrains\Application1\Application\FileLogger;
-use Geekbrains\Application1\Application\Validator;
 use Geekbrains\Application1\Domain\Models\User;
+use Geekbrains\Application1\Domain\Models\Validator\UserValidator;
 use Geekbrains\Application1\Domain\Render\ISupportRender;
 use Geekbrains\Application1\Domain\Render\IUserRender;
 use Geekbrains\Application1\Domain\Render\SupportRender;
@@ -20,6 +20,7 @@ class UserController extends Controller
 {
     private IUserRender $userRender;
     private ISupportRender $supportRender;
+    private UserValidator $userValidator;
     private Logger $logger;
     protected array $actionsPermissions = [
         'actionIndex' => ['user'],
@@ -38,6 +39,7 @@ class UserController extends Controller
         parent::__construct();
         $this->userRender = new UserRender();
         $this->supportRender = new SupportRender();
+        $this->userValidator = new UserValidator();
         $this->logger = FileLogger::createLogger("user_controller_logger", "user-log", "user/controller");
     }
 
@@ -179,9 +181,9 @@ class UserController extends Controller
                 "Введено неправильное количество аргументов url-запроса");
         }
 
-        if (User::validateName($_GET['name']) &&
-            User::validateName($_GET['lastname']) &&
-            User::validateDate($_GET['birthday'])) {
+        if ($this->userValidator->validateName($_GET['name']) &&
+            $this->userValidator->validateName($_GET['lastname']) &&
+            $this->userValidator->validateDate($_GET['birthday'])) {
             return $this->newUser($_GET['name'], $_GET['lastname'], $_GET['birthday'], $_GET['login'], $_GET['password']);
         } else {
             return $this->supportRender->printMessage("Некорректный ввод",
@@ -197,17 +199,22 @@ class UserController extends Controller
     {
         $user = $this->findUser();
 
-        if (Validator::checkQuery('name') && User::validateName($_GET['name'])) {
+        if ($this->requestValidator->checkQuery('name') &&
+            $this->userValidator->validateName($_GET['name'])) {
+
             $user->setUserName($_GET['name']);
         }
-        if (Validator::checkQuery('lastname')) {
+
+        if ($this->requestValidator->checkQuery('lastname')) {
             $user->setUserLastname($_GET['lastname']);
         }
-        if (Validator::checkQuery('birthday')) {
+
+        if ($this->requestValidator->checkQuery('birthday')) {
             $user->setUserBirthdayTimestamp(strtotime($_GET['birthday']));
         }
 
         $user = $this->userService->updateUser($user);
+
         return $this->supportRender->printMessage("Данные обновлены",
             "Данные пользователя {$user->getUserName()} {$user->getUserLastname()} обновлены");
     }
@@ -221,7 +228,7 @@ class UserController extends Controller
      */
     private function findUser(): User
     {
-        $id = Validator::checkId();
+        $id = $this->requestValidator->checkId();
         if ($id) {
             return $this->userService->findUserById($id);
         } else {
@@ -244,7 +251,7 @@ class UserController extends Controller
     {
         try {
             foreach ([$name, $lastname, $birthday, $login, $password] as $requestData) {
-                if (Validator::validateRequestData($requestData)) {
+                if ($this->requestValidator->validateRequestData($requestData)) {
                     throw new Exception("Попытка отправки тегов");
                 }
             }

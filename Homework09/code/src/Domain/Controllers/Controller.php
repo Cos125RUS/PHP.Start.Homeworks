@@ -4,6 +4,7 @@ namespace Geekbrains\Application1\Domain\Controllers;
 
 use Exception;
 use Geekbrains\Application1\Application\Application;
+use Geekbrains\Application1\Domain\Models\Validator\RequestValidator;
 use Geekbrains\Application1\Domain\Service\AuthService;
 use Geekbrains\Application1\Domain\Service\IAuthService;
 use Geekbrains\Application1\Domain\Service\IUserService;
@@ -14,6 +15,7 @@ class Controller
     protected array $actionsPermissions = [];
     protected IUserService $userService;
     protected IAuthService $authService;
+    protected RequestValidator $requestValidator;
 
     /**
      * @throws Exception
@@ -22,6 +24,7 @@ class Controller
     {
         $this->userService = new UserService();
         $this->authService = new AuthService();
+        $this->requestValidator = new RequestValidator();
         $this->setParams();
     }
 

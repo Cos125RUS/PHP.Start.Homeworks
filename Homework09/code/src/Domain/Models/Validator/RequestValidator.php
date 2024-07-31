@@ -1,16 +1,24 @@
 <?php
 
-namespace Geekbrains\Application1\Application;
+namespace Geekbrains\Application1\Domain\Models\Validator;
 
-use Exception;
-use Geekbrains\Application1\Domain\Models\User;
-
-class Validator
+/**
+ * Валидатор запросов пользователя
+ */
+class RequestValidator extends Validator
 {
+    private UserValidator $userValidator;
+
+    public function __construct()
+    {
+        $this->userValidator = new UserValidator();
+    }
+
+
     /** Проверка корректности введённого в url идентификатора
      * @return int
      */
-    public static function checkId(): int
+    public function checkId(): int
     {
         return key_exists('id', $_GET) && is_numeric($_GET['id']) ? (int)$_GET['id'] : 0;
     }
@@ -19,7 +27,7 @@ class Validator
      * @param string $key
      * @return bool
      */
-    public static function checkQuery(string $key): bool
+    public function checkQuery(string $key): bool
     {
         return array_key_exists($key, $_GET);
     }
@@ -28,7 +36,7 @@ class Validator
      * @param string $requestData
      * @return bool
      */
-    public static function validateRequestData(string $requestData): bool
+    public function validateRequestData(string $requestData): bool
     {
         return preg_match('/<.*>/', $requestData);
     }
@@ -36,7 +44,7 @@ class Validator
     /** Проверка параметров POST-запроса на создание нового пользователя
      * @return bool
      */
-    public static function checkCreateUserCountParams(): bool
+    public function checkCreateUserCountParams(): bool
     {
         return isset($_POST['name']) &&
             isset($_POST['lastname']) &&
@@ -49,38 +57,33 @@ class Validator
     /** Проверка совпадения пароля и подтверждения
      * @return bool
      */
-    public static function checkConfirmPassword() : bool
+    public function checkConfirmPassword() : bool
     {
         return $_POST['password'] == $_POST['confirm'];
     }
 
     /** Проверка пользовательского ввода на наличие некорректности переданных значений
-     * @param string $login
-     * @param string $password
-     * @param string $name
-     * @param string $lastname
      * @return array
      */
-    public static function checkUserData(string $login, string $password, string $name,
-                                         string $lastname, string $birthday): array
+    public function checkUserData(): array
     {
         $errors = [];
-        if (!Validator::checkConfirmPassword()) {
+        if (!$this->checkConfirmPassword()) {
             $errors[] = "Поля 'Пароль' и 'Подтверждение' не совпадают";
-        } else if (!User::validatePassword($_POST['password'])) {
+        } else if (!$this->userValidator->validatePassword($_POST['password'])) {
             $errors[] = "Слишком простой пароль (необходимо ввести минимум 8 символов, 
             используя нижний и верхний регистры, числа и символы";
         }
-        if (!User::validateLogin($_POST['login'])) {
+        if (!$this->userValidator->validateLogin($_POST['login'])) {
             $errors[] = "Введён некорректный логин";
         }
-        if (!User::validateName($_POST['name'])) {
+        if (!$this->userValidator->validateName($_POST['name'])) {
             $errors[] = "Имя введено некорректно";
         }
-        if (!User::validateName($_POST['lastname'])) {
+        if (!$this->userValidator->validateName($_POST['lastname'])) {
             $errors[] = "Фамилия введена некорректно";
         }
-        if (strtotime($birthday) > time()){
+        if (strtotime($_POST['birthday']) > time()){
             $errors[] = "Дата рождения введена некорректно";
         }
 
