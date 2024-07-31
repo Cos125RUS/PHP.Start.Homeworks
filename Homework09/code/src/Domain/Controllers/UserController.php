@@ -60,12 +60,9 @@ class UserController extends Controller
 
         $users = $this->userService->getAllUsersFromStorage();
 
-        if (!$users) {
-            $mode = "empty";
-        } else {
-            $mode = "users";
-        }
-        return $this->userRender->renderUsersList($mode, $users, $isAdmin ?? null);
+        $mode = !$users ? "empty" : "users";
+
+        return $this->userRender->renderUsersList($mode, $users, $isAdmin);
     }
 
     /**

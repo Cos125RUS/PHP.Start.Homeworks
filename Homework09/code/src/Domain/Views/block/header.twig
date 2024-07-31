@@ -20,7 +20,7 @@
         <script>
             const timeBox = document.querySelector('#time');
             const time = new Date(timeBox.innerHTML * 1000);
-            timeBox.innerHTML = `${time.getHours()}:${time.getMinutes()}`;
+            timeBox.innerHTML = `${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
             addEventListener("DOMContentLoaded", () => {
                 setInterval(() => {
                     $.ajax({
