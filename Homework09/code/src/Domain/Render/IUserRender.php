@@ -6,5 +6,5 @@ interface IUserRender
 {
     function renderAddForm(string $title, string $subtitle, string $action, string $name = "",
                            string $lastname = "", string|int $birthday = ""): string;
-    function renderUsersList(string $mode, array $users = []): string;
+    function renderUsersList(string $mode, array $users = [], ?bool $isAdmin = false): string;
 }

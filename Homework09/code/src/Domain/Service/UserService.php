@@ -136,8 +136,18 @@ class UserService implements IUserService
      * @return User|false
      * @throws Exception
      */
-    function findUserByToken(string $token): User|false
+    public function findUserByToken(string $token): User|false
     {
         return $this->userRepository->getByToken($token);
+    }
+
+    /** Проверить, является ли пользователь админом
+     * @param int $id
+     * @return bool
+     */
+    public function isAdmin(int $id): bool
+    {
+        $roles = $this->roleRepository->findUserRoles($id);
+        return in_array("admin", $roles);
     }
 }

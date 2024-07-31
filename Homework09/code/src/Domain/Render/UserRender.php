@@ -4,6 +4,9 @@ namespace Geekbrains\Application1\Domain\Render;
 
 use Geekbrains\Application1\Application\Render;
 use Geekbrains\Application1\Domain\Models\User;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class UserRender implements IUserRender
 {
@@ -35,6 +38,9 @@ class UserRender implements IUserRender
      * @param string|int $birthday
      * @param string $login
      * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function renderAddForm(string $title, string $subtitle, string $action, string $name = "",
                                   string $lastname = "", string|int $birthday = "", string $login = ""): string
@@ -54,9 +60,13 @@ class UserRender implements IUserRender
     /** Универсальный шаблон отрисовки списка пользователей
      * @param string $mode модификатор списка (empty/users)
      * @param array $users
+     * @param bool $isAdmin
      * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
-    public function renderUsersList(string $mode, array $users = []): string
+    public function renderUsersList(string $mode, array $users = [], ?bool $isAdmin = false): string
     {
         $data = $this->usersListOptions[$mode];
         return $this->render->renderPage(
@@ -66,6 +76,7 @@ class UserRender implements IUserRender
                 'message' => $data["message"],
                 'users' => $users,
                 'href' => '/user/add',
+                'admin' => $isAdmin
             ]);
     }
 }

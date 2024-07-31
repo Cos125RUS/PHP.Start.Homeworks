@@ -12,6 +12,9 @@ use Geekbrains\Application1\Domain\Render\IUserRender;
 use Geekbrains\Application1\Domain\Render\SupportRender;
 use Geekbrains\Application1\Domain\Render\UserRender;
 use Monolog\Logger;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class UserController extends Controller
 {
@@ -43,16 +46,26 @@ class UserController extends Controller
     /**
      * Список пользователей
      * @return string
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     public function actionIndex(): string
     {
+        $isAdmin = null;
+        if (isset($_SESSION['id_user'])) {
+            $roles = $this->getUserRoles();
+            $isAdmin = in_array("admin", $roles);
+        }
+
         $users = $this->userService->getAllUsersFromStorage();
 
         if (!$users) {
-            return $this->userRender->renderUsersList("empty");
+            $mode = "empty";
         } else {
-            return $this->userRender->renderUsersList("users", $users);
+            $mode = "users";
         }
+        return $this->userRender->renderUsersList($mode, $users, $isAdmin ?? null);
     }
 
     /**
