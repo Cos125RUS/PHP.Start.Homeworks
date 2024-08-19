@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 **/.idea
 **/.gitignore
 **/vendor
@@ -10,3 +11,10 @@
 **/*.lock
 **/db/
 >>>>>>> hw06
+=======
+*/.gitignore
+**/vendor/
+**/.idea/
+**/*.lock
+**/db/
+>>>>>>> hw07
