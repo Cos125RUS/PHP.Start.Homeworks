@@ -1,28 +1,6 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 **/.idea
 **/.gitignore
 **/vendor
 **/*.lock
-=======
-*/.idea
-*/.gitignore
-**/vendor/
-**/*.lock
 **/db/
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> hw06
-=======
-*/.gitignore
-**/vendor/
-**/.idea/
-**/*.lock
-**/db/
->>>>>>> hw07
-=======
 **/log/
->>>>>>> hw08
-=======
-**/log
->>>>>>> hw09
