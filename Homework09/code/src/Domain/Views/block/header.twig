@@ -1,0 +1,38 @@
+<header>
+    <nav>
+        <a href="/">Главная</a>
+        <a href="/user">Пользователи</a>
+        <a href="/payment">Платежи</a>
+        <a href="/about">О нас</a>
+        <a href="/site/info">Информация о сервере</a>
+    </nav>
+    <div class="options">
+        {% if auth %}
+            <div class="user_info">
+                <p class="login">{{ login }}</p><a href="/auth/logout">Выход</a>
+            </div>
+        {% else %}
+            <div>
+                <a href="/auth/login">Вход</a> / <a href="/auth/registration">Регистрация</a>
+            </div>
+        {% endif %}
+        <div class="time" id="time">{{ time }}</div>
+        <script>
+            const timeBox = document.querySelector('#time');
+            const time = new Date(timeBox.innerHTML * 1000);
+            timeBox.innerHTML = `${time.getHours()}:${time.getMinutes() < 10 ? '0' + time.getMinutes() : time.getMinutes()}`;
+            addEventListener("DOMContentLoaded", () => {
+                setInterval(() => {
+                    $.ajax({
+                        method: 'GET',
+                        url: "/site/time"
+                    }).done((response) => {
+                        const timestamp = $.parseJSON(response)['time'] * 1000;
+                        const time = new Date(timestamp);
+                        timeBox.innerHTML = `${time.getHours()}:${time.getMinutes()}`;
+                    });
+                }, 1000 * 60);
+            });
+        </script>
+    </div>
+</header>
