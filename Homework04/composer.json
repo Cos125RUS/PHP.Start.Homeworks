@@ -1,0 +1,14 @@
+{
+    "name": "valerii/homework04",
+    "autoload": {
+        "psr-4": {
+            "Valerii\\Homework04\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Valerii Panov"
+        }
+    ],
+    "require": {}
+}
